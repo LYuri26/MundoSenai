@@ -4,27 +4,90 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Simulador de Algoritmo Social</title>
+    <title>Simulador de Algoritmo Social Avançado</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <div class="container my-5">
-        <h1 class="text-center mb-4">🧠 Simulador de Algoritmo de Rede Social</h1>
+        <header class="text-center mb-5">
+            <h1>🧠 Simulador de Algoritmo de Rede Social Avançado</h1>
+            <p class="lead text-muted">Explore como os algoritmos modernos moldam o que você vê</p>
+        </header>
 
-        <div class="mb-4">
-            <label for="clusterSelect" class="form-label">Escolha sua bolha de interesse:</label>
-            <select id="clusterSelect" class="form-select w-auto" onchange="mudarBolha(this)">
-                <option value="tech">Tech</option>
-                <option value="politica">Política</option>
-                <option value="lifestyle">Lifestyle</option>
-            </select>
+        <div class="row">
+            <!-- Sidebar com controles e gráficos -->
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Configurações do Algoritmo</h5>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="showViral" checked>
+                            <label class="form-check-label" for="showViral">Mostrar conteúdo viral</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="showOutside" checked>
+                            <label class="form-check-label" for="showOutside">Mostrar conteúdo fora da minha
+                                bolha</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="showShadowbanned" checked>
+                            <label class="form-check-label" for="showShadowbanned">Mostrar conteúdo limitado</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="clusterSelect" class="form-label">Sua bolha principal:</label>
+                            <select id="clusterSelect" class="form-select" onchange="mudarBolha(this)">
+                                <option value="tech">Tecnologia</option>
+                                <option value="politica">Política</option>
+                                <option value="lifestyle">Estilo de Vida</option>
+                                <option value="negocios">Negócios</option>
+                                <option value="entretenimento">Entretenimento</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="resetarAfinidades()">
+                            Resetar Afinidades
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Sua Afinidade por Tópico</h5>
+                        <div class="chart-container">
+                            <canvas id="affinityChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Seu Engajamento por Emoção</h5>
+                        <div class="chart-container">
+                            <canvas id="emotionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Área principal do feed -->
+            <div class="col-md-8">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4>Seu Feed Personalizado</h4>
+                    <div class="text-muted" id="feedStats">0 posts</div>
+                </div>
+
+                <div id="feed" class="row row-cols-1 g-4"></div>
+
+                <div id="emptyFeed" class="text-center py-5 d-none">
+                    <h5>Nenhum post encontrado</h5>
+                    <p>Ajuste seus filtros para ver mais conteúdo</p>
+                </div>
+            </div>
         </div>
-
-        <div id="feed" class="row row-cols-1 g-4"></div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
 </body>
 
