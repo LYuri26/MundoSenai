@@ -1,30 +1,135 @@
 // 🧠 CONFIGURAÇÕES DO ALGORITMO - PSICOLOGIA DO ENGAJAMENTO
 const PESOS = {
-  like: 6, // Curtidas têm peso alto (emoção positiva)
-  dislike: 4, // Deslikes também engajam (emoção negativa)
-  comment: 7, // Comentários valem mais (expressão emocional)
-  share: 9, // Compartilhamentos são ouro para viralização
-  report: 2, // Até denúncias geram dados (controvérsia engaja)
-  view: 0.3, // Visualizações são a base
-  timeSpent: 0.2, // Tempo gasto mostra interesse profundo
-  save: 8, // Salvamentos indicam valor emocional
-  emotion: 4, // Peso extra para conteúdo emocional
-  follow: 15, // Seguir o autor após ver o conteúdo
-  watchTime: 0.5, // Para vídeos - % assistida
-  completion: 2, // Conteúdo consumido até o final
-  revisit: 3, // Voltar ao post depois de ver
-  deepComment: 10, // Comentários longos/respostas
-  reaction: 5, // Reações além de like (coração, risada, etc)
+  like: 6, // Engajamento positivo
+  dislike: 4, // Engajamento negativo
+  comment: 7, // Expressão emocional
+  share: 9, // Viralização
+  report: 2, // Controvérsia
+  view: 0.3, // Consumo passivo
+  timeSpent: 0.2, // Interesse profundo
+  save: 8, // Valor emocional
+  follow: 15, // Conexão com autor
+  watchTime: 0.5, // Engajamento com vídeos
+  completion: 2, // Consumo completo
+  revisit: 3, // Reengajamento
+  deepComment: 10, // Interação profunda
+  reaction: 5, // Expressão emocional rápida
 };
 
-// 🌈 TIPOS DE EMOÇÕES E SEU IMPACTO
+// 🌈 TIPOS DE EMOÇÕES DINÂMICAS (PREDEFINIDAS)
 const EMOTION_TYPES = {
-  anger: { name: "Raiva", weight: 2.0, color: "#dc3545" },
-  controversy: { name: "Polêmica", weight: 2.3, color: "#ffc107" },
-  surprise: { name: "Surpresa", weight: 1.8, color: "#17a2b8" },
-  happiness: { name: "Felicidade", weight: 1.5, color: "#28a745" },
-  sadness: { name: "Tristeza", weight: 1.7, color: "#6c757d" },
-  fear: { name: "Medo", weight: 2.1, color: "#6f42c1" },
+  admiration: {
+    name: "Admiração",
+    weight: 1.5,
+    color: "#4CAF50",
+    engagementPattern: {
+      like: 1.8,
+      comment: 1.5,
+      share: 1.6,
+      dislike: 0.2,
+      report: 0.1,
+    },
+    initialLikes: () => Math.floor(Math.random() * 50) + 30,
+    initialDislikes: () => Math.floor(Math.random() * 5),
+  },
+  amusement: {
+    name: "Diversão",
+    weight: 1.6,
+    color: "#FFC107",
+    engagementPattern: {
+      like: 1.7,
+      comment: 1.2,
+      share: 1.8,
+      dislike: 0.3,
+      report: 0.2,
+    },
+    initialLikes: () => Math.floor(Math.random() * 60) + 40,
+    initialDislikes: () => Math.floor(Math.random() * 8),
+  },
+  anger: {
+    name: "Raiva",
+    weight: 2.1,
+    color: "#F44336",
+    engagementPattern: {
+      like: 1.2,
+      comment: 2.0,
+      share: 1.5,
+      dislike: 1.8,
+      report: 1.5,
+    },
+    initialLikes: () => Math.floor(Math.random() * 30) + 20,
+    initialDislikes: () => Math.floor(Math.random() * 25) + 15,
+  },
+  curiosity: {
+    name: "Curiosidade",
+    weight: 1.7,
+    color: "#2196F3",
+    engagementPattern: {
+      like: 1.5,
+      comment: 1.8,
+      share: 1.4,
+      dislike: 0.4,
+      report: 0.3,
+    },
+    initialLikes: () => Math.floor(Math.random() * 45) + 25,
+    initialDislikes: () => Math.floor(Math.random() * 10),
+  },
+  inspiration: {
+    name: "Inspiração",
+    weight: 1.8,
+    color: "#9C27B0",
+    engagementPattern: {
+      like: 1.9,
+      comment: 1.7,
+      share: 2.0,
+      dislike: 0.2,
+      report: 0.1,
+    },
+    initialLikes: () => Math.floor(Math.random() * 55) + 35,
+    initialDislikes: () => Math.floor(Math.random() * 5),
+  },
+  sadness: {
+    name: "Tristeza",
+    weight: 1.9,
+    color: "#607D8B",
+    engagementPattern: {
+      like: 1.3,
+      comment: 1.9,
+      share: 1.2,
+      dislike: 0.6,
+      report: 0.4,
+    },
+    initialLikes: () => Math.floor(Math.random() * 40) + 20,
+    initialDislikes: () => Math.floor(Math.random() * 15) + 5,
+  },
+  surprise: {
+    name: "Surpresa",
+    weight: 1.8,
+    color: "#00BCD4",
+    engagementPattern: {
+      like: 1.6,
+      comment: 1.5,
+      share: 1.9,
+      dislike: 0.5,
+      report: 0.3,
+    },
+    initialLikes: () => Math.floor(Math.random() * 70) + 30,
+    initialDislikes: () => Math.floor(Math.random() * 12),
+  },
+  controversy: {
+    name: "Polêmica",
+    weight: 2.3,
+    color: "#FF9800",
+    engagementPattern: {
+      like: 1.4,
+      comment: 2.2,
+      share: 1.7,
+      dislike: 1.5,
+      report: 1.8,
+    },
+    initialLikes: () => Math.floor(Math.random() * 35) + 25,
+    initialDislikes: () => Math.floor(Math.random() * 30) + 20,
+  },
 };
 
 // 🏷️ CATEGORIAS DE CONTEÚDO
@@ -34,6 +139,9 @@ const CLUSTERS = [
   "lifestyle",
   "negocios",
   "entretenimento",
+  "ciencia",
+  "saude",
+  "esportes",
 ];
 const CLUSTER_NAMES = {
   tech: "Tecnologia",
@@ -41,136 +149,87 @@ const CLUSTER_NAMES = {
   lifestyle: "Estilo de Vida",
   negocios: "Negócios",
   entretenimento: "Entretenimento",
+  ciencia: "Ciência",
+  saude: "Saúde",
+  esportes: "Esportes",
 };
 
-// 📊 POSTAGENS SIMULADAS (CARGA EMOCIONAL)
-const fakePosts = [
-  {
-    texto: "Aprenda JavaScript com memes",
-    cluster: "tech",
-    emotion: "happiness",
-  },
-  {
-    texto: "Os bastidores do TikTok revelados",
-    cluster: "tech",
-    emotion: "surprise",
-  },
-  {
-    texto: "5 dicas para viralizar no Instagram",
-    cluster: "lifestyle",
-    emotion: "happiness",
-  },
-  {
-    texto: "Como o algoritmo te vicia sem perceber",
-    cluster: "tech",
-    emotion: "fear",
-  },
-  {
-    texto: "Privacidade digital: estamos sendo vigiados?",
-    cluster: "politica",
-    emotion: "fear",
-  },
-  {
-    texto: "Fake news que mudaram o mundo",
-    cluster: "politica",
-    emotion: "anger",
-  },
-  {
-    texto: "Desconecte-se: como vencer o vício em redes",
-    cluster: "lifestyle",
-    emotion: "sadness",
-  },
-  {
-    texto: "O efeito bolha explicado em 30 segundos",
-    cluster: "politica",
-    emotion: "controversy",
-  },
-  {
-    texto: "Você realmente escolhe o que consome?",
-    cluster: "politica",
-    emotion: "controversy",
-  },
-  {
-    texto: "Por que o feed parece sempre o mesmo?",
-    cluster: "tech",
-    emotion: "anger",
-  },
-  {
-    texto: "Bitcoin atinge novo recorde histórico",
-    cluster: "negocios",
-    emotion: "happiness",
-  },
-  {
-    texto: "Novo filme da Marvel quebra recordes",
-    cluster: "entretenimento",
-    emotion: "happiness",
-  },
-  {
-    texto: "Tendências de design para 2024",
-    cluster: "lifestyle",
-    emotion: "happiness",
-  },
-  {
-    texto: "Como investir em ações para iniciantes",
-    cluster: "negocios",
-    emotion: "fear",
-  },
-  {
-    texto: "Revelado o trailer do novo jogo aguardado",
-    cluster: "entretenimento",
-    emotion: "surprise",
-  },
-  {
-    texto: "Inteligência Artificial substituirá empregos?",
-    cluster: "tech",
-    emotion: "fear",
-  },
-  {
-    texto: "Eleições 2024: últimas pesquisas",
-    cluster: "politica",
-    emotion: "anger",
-  },
-  {
-    texto: "Receita de pão caseiro em 5 minutos",
-    cluster: "lifestyle",
-    emotion: "happiness",
-  },
-  {
-    texto: "Mercado de trabalho pós-pandemia",
-    cluster: "negocios",
-    emotion: "fear",
-  },
-  {
-    texto: "Série surpreende críticos e público",
-    cluster: "entretenimento",
-    emotion: "surprise",
-  },
-  {
-    texto: "O que eles não querem que você saiba!",
-    cluster: "politica",
-    emotion: "anger",
-  },
-  {
-    texto: "Celebridade é flagrada em situação embaraçosa",
-    cluster: "entretenimento",
-    emotion: "surprise",
-  },
-  {
-    texto: "Alerta: novo vírus está se espalhando",
-    cluster: "tech",
-    emotion: "fear",
-  },
-  {
-    texto: "Você está sendo manipulado diariamente",
-    cluster: "politica",
-    emotion: "anger",
-  },
-  {
-    texto: "Este simples truque vai mudar sua vida",
-    cluster: "lifestyle",
-    emotion: "surprise",
-  },
-];
+// 📝 GERADOR DE TEXTO ALEATÓRIO
+function gerarTextoAleatorio() {
+  const temas = {
+    tech: [
+      "Inteligência Artificial",
+      "Blockchain",
+      "Realidade Virtual",
+      "5G",
+      "IoT",
+    ],
+    politica: [
+      "Eleições",
+      "Reforma Tributária",
+      "Política Externa",
+      "Direitos Humanos",
+      "Legislação",
+    ],
+    lifestyle: ["Viagens", "Decoração", "Moda", "Gastronomia", "Fitness"],
+    negocios: [
+      "Investimentos",
+      "Empreendedorismo",
+      "Mercado Financeiro",
+      "Startups",
+      "Carreira",
+    ],
+    entretenimento: ["Filmes", "Séries", "Celebridades", "Música", "Games"],
+    ciencia: ["Pesquisa", "Descobertas", "Espaço", "Biologia", "Inovação"],
+    saude: ["Bem-estar", "Nutrição", "Exercícios", "Mental", "Prevenção"],
+    esportes: ["Futebol", "Basquete", "Tênis", "Olimpíadas", "Atletismo"],
+  };
+
+  const formatos = [
+    "Novo estudo revela segredos sobre %t",
+    "Como %t está mudando o mundo",
+    "10 fatos surpreendentes sobre %t",
+    "Tudo o que você precisa saber sobre %t",
+    "A revolução do %t explicada",
+    "Por que %t é mais importante do que você pensa",
+    "O futuro do %t: perspectivas e desafios",
+    "%t: guia completo para iniciantes",
+  ];
+
+  const cluster = CLUSTERS[Math.floor(Math.random() * CLUSTERS.length)];
+  const tema =
+    temas[cluster][Math.floor(Math.random() * temas[cluster].length)];
+  const formato = formatos[Math.floor(Math.random() * formatos.length)];
+
+  return formato.replace("%t", tema);
+}
+
+// 🧠 DETECTAR EMOÇÃO - SEMPRE RETORNA UMA EMOÇÃO
+function detectarEmocao(post) {
+  // Se já tem uma emoção definida, mantém
+  if (post.emotion && EMOTION_TYPES[post.emotion]) {
+    const emotion = EMOTION_TYPES[post.emotion];
+    return {
+      emotion: post.emotion,
+      emotionName: emotion.name,
+      emotionColor: emotion.color,
+      weight: emotion.weight,
+    };
+  }
+
+  // Caso contrário, escolhe uma emoção aleatória
+  const emotionKeys = Object.keys(EMOTION_TYPES);
+  const randomEmotionKey =
+    emotionKeys[Math.floor(Math.random() * emotionKeys.length)];
+  const emotion = EMOTION_TYPES[randomEmotionKey];
+
+  return {
+    emotion: randomEmotionKey,
+    emotionName: emotion.name,
+    emotionColor: emotion.color,
+    weight: emotion.weight,
+  };
+}
 
 // 🧮 VARIÁVEIS DE ESTADO
 let posts = [];
@@ -183,13 +242,13 @@ let lastInteractionTime = new Date();
 
 // 🏁 INICIALIZAÇÃO
 function inicializarSistema() {
-  // Inicializa afinidades
+  // Inicializa afinidades com valores básicos
   CLUSTERS.forEach((cluster) => {
-    userClusterAffinity[cluster] = 0;
+    userClusterAffinity[cluster] = cluster === "tech" ? 10 : Math.random() * 5;
   });
 
   Object.keys(EMOTION_TYPES).forEach((emotion) => {
-    userEmotionAffinity[emotion] = 0;
+    userEmotionAffinity[emotion] = Math.random() * 8 + 2;
   });
 
   // Define o cluster inicial no select
@@ -209,55 +268,69 @@ function inicializarSistema() {
 
   // Inicia o sistema de "rabisco" (dwell time)
   simularRabisco();
+
+  // Atualiza gráficos em tempo real
+  setInterval(atualizarGraficos, 2000);
 }
 
-// 📝 GERADOR DE POSTAGENS
+// 📊 GERADOR DE POSTAGENS ALEATÓRIAS (COM EMOÇÕES)
 function gerarPostagens() {
   posts = [];
-  const TOTAL_POSTS = 25;
+  const TOTAL_POSTS = 30;
 
   for (let i = 0; i < TOTAL_POSTS; i++) {
-    const base = fakePosts[i % fakePosts.length];
-    const emotionData = EMOTION_TYPES[base.emotion];
+    const cluster = CLUSTERS[Math.floor(Math.random() * CLUSTERS.length)];
+    const emotionKeys = Object.keys(EMOTION_TYPES);
+    const randomEmotionKey =
+      emotionKeys[Math.floor(Math.random() * emotionKeys.length)];
+    const emotion = EMOTION_TYPES[randomEmotionKey];
 
-    // Fatores de engajamento baseados em emoção
-    const emotionFactor = emotionData.weight;
-    const isVideo = Math.random() > 0.7;
-    const isAd = Math.random() > 0.9;
+    // Gera valores iniciais baseados no tipo de emoção
+    const initialLikes = emotion.initialLikes();
+    const initialDislikes = emotion.initialDislikes();
+    const initialComments = Math.floor(
+      initialLikes * (Math.random() * 0.3 + 0.1)
+    );
+    const initialShares = Math.floor(
+      initialLikes * (Math.random() * 0.2 + 0.05)
+    );
+    const initialViews = initialLikes * (Math.random() * 5 + 3);
 
     posts.push({
       id: i,
-      content: base.texto,
-      cluster: base.cluster,
-      emotion: base.emotion,
-      emotionColor: emotionData.color,
-      emotionName: emotionData.name,
-      like: Math.floor(Math.random() * 50 * emotionFactor),
-      dislike: Math.floor(Math.random() * 15 * emotionFactor * 0.9),
-      comment: Math.floor(Math.random() * 30 * emotionFactor * 1.7),
-      share: Math.floor(Math.random() * 25 * emotionFactor),
-      report: Math.floor(Math.random() * 8 * (emotionFactor > 1.8 ? 1.3 : 1)),
-      view: Math.floor(Math.random() * 1200 * emotionFactor),
-      timeSpent: Math.floor(Math.random() * 180 * emotionFactor),
-      save: Math.floor(Math.random() * 20 * emotionFactor),
-      isVideo,
-      isAd,
+      content: gerarTextoAleatorio(),
+      cluster: cluster,
+      emotion: randomEmotionKey,
+      emotionColor: emotion.color,
+      emotionName: emotion.name,
+      like: initialLikes,
+      dislike: initialDislikes,
+      comment: initialComments,
+      share: initialShares,
+      report: Math.floor(Math.random() * 5),
+      view: initialViews,
+      timeSpent: Math.floor(initialViews * (Math.random() * 5 + 3)),
+      save: Math.floor(initialLikes * (Math.random() * 0.2 + 0.05)),
+      isVideo: Math.random() > 0.7,
+      isAd: Math.random() > 0.9,
       viralBoost: 1,
       score: 0,
       createdAt: new Date(
-        Date.now() - Math.floor(Math.random() * 7 * 24 * 60 * 60 * 1000)
+        Date.now() - Math.floor(Math.random() * 14 * 24 * 60 * 60 * 1000)
       ),
       coldStartBoost: 1,
-      randomSeed: 0.8 + Math.random() * 0.4,
+      randomSeed: 0.7 + Math.random() * 0.6,
       shadowbanned: false,
+      engagementHistory: [],
     });
   }
 
   // Aplica cold start boost para posts novos
+  const now = new Date();
   posts.forEach((post) => {
-    const hoursSinceCreation = (new Date() - post.createdAt) / (1000 * 60 * 60);
-    if (hoursSinceCreation < 2) {
-      post.coldStartBoost = 1.8 - (hoursSinceCreation / 2) * 0.8;
+    const hoursSinceCreation = (now - post.createdAt) / (1000 * 60 * 60);
+    if (hoursSinceCreation < 3) {
+      post.coldStartBoost = 1.5 + (1 - hoursSinceCreation / 3) * 0.5;
     }
   });
 
@@ -266,8 +339,8 @@ function gerarPostagens() {
   atualizarGraficos();
 }
 
-// 🧠 CÁLCULO DE SCORE COM PSICOLOGIA
-function calcularScore() {
+// 🧠 CÁLCULO DE SCORE PARA UM POST INDIVIDUAL
+function calcularScorePost(post) {
   const now = new Date();
   const hour = now.getHours();
 
@@ -278,109 +351,200 @@ function calcularScore() {
   else if (hour >= 12 && hour < 14) timeFactor = 1.1;
   else if (hour >= 17 && hour < 20) timeFactor = 1.4;
 
-  posts.forEach((post) => {
-    const emotionData = EMOTION_TYPES[post.emotion];
+  // Obtém os dados da emoção do post
+  const emotion = EMOTION_TYPES[post.emotion];
+  const emotionWeight = emotion ? emotion.weight : 1;
 
-    // 1. SCORE BASE: Engajamento bruto
-    const baseScore =
-      (post.like * PESOS.like +
-        post.dislike * PESOS.dislike +
-        post.comment * PESOS.comment +
-        post.share * PESOS.share +
-        post.report * PESOS.report +
-        post.view * PESOS.view +
-        post.timeSpent * PESOS.timeSpent +
-        post.save * PESOS.save) *
-      emotionData.weight;
+  // 1. SCORE BASE: Engajamento bruto
+  const baseScore =
+    (post.like * PESOS.like +
+      post.dislike * PESOS.dislike +
+      post.comment * PESOS.comment +
+      post.share * PESOS.share +
+      post.report * PESOS.report +
+      post.view * PESOS.view +
+      post.timeSpent * PESOS.timeSpent +
+      post.save * PESOS.save) *
+    emotionWeight;
 
-    // 2. FATOR VIRAL: Taxa de engajamento
-    const totalEngajamento =
-      post.like +
-      post.dislike * 0.8 +
-      post.comment * 2 +
-      post.share * 3 +
-      post.report * 0.6;
-    const viralFactor = totalEngajamento / (post.view || 1);
+  // 2. FATOR VIRAL: Taxa de engajamento
+  const totalEngagement =
+    post.like +
+    post.dislike * 0.8 +
+    post.comment * 2 +
+    post.share * 3 +
+    post.report * 0.6;
+  const engagementRate = totalEngagement / (post.view || 1);
+  const absoluteEngagement = totalEngagement;
+  const timeSinceCreation = (now - post.createdAt) / (1000 * 60 * 60); // horas
 
-    post.viralBoost =
-      viralFactor > 0.18
-        ? 2.7
-        : viralFactor > 0.1
-        ? 2.0
-        : viralFactor > 0.05
-        ? 1.5
-        : 1;
+  // Critérios rigorosos para viral
+  post.viralBoost = 1; // valor padrão
+  if (timeSinceCreation < 48) {
+    // só posts recentes podem ser virais
+    if (engagementRate > 0.25 && absoluteEngagement > 50) {
+      post.viralBoost = 2.5 + Math.random() * 0.5; // boost alto
+    } else if (engagementRate > 0.15 && absoluteEngagement > 30) {
+      post.viralBoost = 1.8 + Math.random() * 0.4; // boost médio
+    } else if (engagementRate > 0.08 && absoluteEngagement > 15) {
+      post.viralBoost = 1.3 + Math.random() * 0.3; // boost pequeno
+    }
+  }
 
-    // 3. AFINIDADES DO USUÁRIO
-    const clusterAffinity =
-      Math.sqrt(userClusterAffinity[post.cluster] || 0) * 0.15;
-    const emotionAffinity =
-      Math.sqrt(userEmotionAffinity[post.emotion] || 0) * 0.12;
-    const affinityBoost = 1 + clusterAffinity + emotionAffinity;
+  // 3. AFINIDADES DO USUÁRIO
+  const clusterAffinity =
+    Math.sqrt(userClusterAffinity[post.cluster] || 0) * 0.15;
+  const emotionAffinity = post.emotion
+    ? Math.sqrt(userEmotionAffinity[post.emotion] || 0) * 0.12
+    : 0;
+  const affinityBoost = 1 + clusterAffinity + emotionAffinity;
 
-    // 4. PRIORIDADES DO ALGORITMO
-    const clusterPriority = post.cluster === userCluster ? 2.3 : 1;
-    const videoPriority = post.isVideo ? 1.6 : 1;
-    const adPriority = post.isAd ? 0.85 : 1;
+  // 4. PRIORIDADES DO ALGORITMO
+  const clusterPriority =
+    post.cluster === userCluster ? 2.0 + Math.random() * 0.5 : 1;
+  const videoPriority = post.isVideo ? 1.4 + Math.random() * 0.4 : 1;
+  const adPriority = post.isAd ? 0.7 + Math.random() * 0.2 : 1;
 
-    // 5. RECÊNCIA
-    const hoursOld = (new Date() - post.createdAt) / (1000 * 60 * 60);
-    const recencyBoost =
-      hoursOld < 6 ? 2.2 : hoursOld < 24 ? 1.9 : hoursOld < 72 ? 1.4 : 1;
+  // 5. RECÊNCIA
+  const hoursOld = (now - post.createdAt) / (1000 * 60 * 60);
+  const recencyBoost =
+    hoursOld < 4
+      ? 2.0 + Math.random() * 0.4
+      : hoursOld < 12
+      ? 1.7 + Math.random() * 0.3
+      : hoursOld < 24
+      ? 1.4 + Math.random() * 0.2
+      : hoursOld < 72
+      ? 1.1 + Math.random() * 0.2
+      : 0.8 + Math.random() * 0.2;
 
-    // 6. DECAIMENTO TEMPORAL
-    const daysOld = (new Date() - post.createdAt) / (1000 * 60 * 60 * 24);
-    const decayFactor =
-      daysOld < 1
-        ? 1
-        : daysOld < 3
-        ? 0.9
-        : daysOld < 7
-        ? 0.7
-        : daysOld < 14
-        ? 0.4
-        : 0.2;
+  // 6. DECAIMENTO TEMPORAL
+  const daysOld = hoursOld / 24;
+  const decayFactor =
+    daysOld < 1
+      ? 1
+      : daysOld < 2
+      ? 0.9 - Math.random() * 0.1
+      : daysOld < 5
+      ? 0.7 - Math.random() * 0.1
+      : daysOld < 10
+      ? 0.5 - Math.random() * 0.1
+      : 0.3 - Math.random() * 0.1;
 
-    // 7. FATOR DE SATURAÇÃO
-    const saturationFactor = 1 - (post.view / 5000) * 0.5;
+  // 7. FATOR DE SATURAÇÃO
+  const saturationFactor = 1 - (post.view / 8000) * (0.3 + Math.random() * 0.2);
 
-    // 8. SHADOWBAN
-    const dislikeRatio = post.dislike / (post.like + post.dislike || 1);
-    const reportRatio = post.report / (post.view || 1);
-    post.shadowbanned = dislikeRatio > 0.4 || reportRatio > 0.05;
-    const shadowbanFactor = post.shadowbanned
-      ? 0.3
-      : dislikeRatio > 0.25 || reportRatio > 0.02
-      ? 0.7
+  // 8. SHADOWBAN
+  const dislikeRatio = post.dislike / (post.like + post.dislike || 1);
+  const reportRatio = post.report / (post.view || 1);
+  post.shadowbanned =
+    dislikeRatio > 0.35 + Math.random() * 0.1 ||
+    reportRatio > 0.04 + Math.random() * 0.02;
+  const shadowbanFactor = post.shadowbanned
+    ? 0.2 + Math.random() * 0.2
+    : dislikeRatio > 0.2 + Math.random() * 0.1 ||
+      reportRatio > 0.02 + Math.random() * 0.01
+    ? 0.6 + Math.random() * 0.2
+    : 1;
+
+  // 9. EFEITO DE REDE
+  const growthRate = (post.share * 3 + post.comment * 2) / (hoursOld || 1);
+  const networkEffect =
+    growthRate > 4 + Math.random() * 2
+      ? 1.4 + Math.random() * 0.3
+      : growthRate > 1.5 + Math.random() * 1
+      ? 1.1 + Math.random() * 0.2
       : 1;
 
-    // 9. EFEITO DE REDE (viralidade em cascata)
-    const growthRate =
-      (post.share * 3 + post.comment * 2) /
-      ((new Date() - post.createdAt) / (1000 * 60 * 60) || 1);
-    const networkEffect = growthRate > 5 ? 1.5 : growthRate > 2 ? 1.2 : 1;
+  // SCORE FINAL
+  post.score = Math.floor(
+    baseScore *
+      post.viralBoost *
+      affinityBoost *
+      clusterPriority *
+      videoPriority *
+      adPriority *
+      recencyBoost *
+      post.coldStartBoost *
+      post.randomSeed *
+      decayFactor *
+      Math.max(0.2, saturationFactor) *
+      timeFactor *
+      shadowbanFactor *
+      networkEffect *
+      (0.9 + Math.random() * 0.2)
+  );
+}
 
-    // SCORE FINAL
-    post.score = Math.floor(
-      baseScore *
-        post.viralBoost *
-        affinityBoost *
-        clusterPriority *
-        videoPriority *
-        adPriority *
-        recencyBoost *
-        post.coldStartBoost *
-        post.randomSeed *
-        decayFactor *
-        Math.max(0.3, saturationFactor) *
-        timeFactor *
-        shadowbanFactor *
-        networkEffect
-    );
+// 🧠 CÁLCULO DE SCORE PARA TODOS OS POSTS
+function calcularScore() {
+  posts.forEach((post) => {
+    calcularScorePost(post);
   });
-
-  // Ordena por score
+  // Ordena os posts pelo score (maior primeiro)
   posts.sort((a, b) => b.score - a.score);
+}
+
+// 🖥️ ATUALIZAR CARD INDIVIDUAL
+function atualizarCardPost(postId) {
+  const card = document.querySelector(`.card[data-id="${postId}"]`);
+  if (!card) return;
+
+  const post = posts.find((p) => p.id === postId);
+  if (!post) return;
+
+  const engagementPercent = Math.min(
+    100,
+    (post.like + post.comment * 1.5 + post.share * 2) / 3
+  );
+
+  // Atualiza elementos do card
+  const emotionBadge = card.querySelector(".emotion-badge");
+  emotionBadge.style.backgroundColor = post.emotionColor;
+  emotionBadge.textContent = post.emotionName;
+
+  card.querySelector(".score").textContent = `Score: ${post.score}`;
+  card.querySelector(
+    ".engagement-progress"
+  ).style.width = `${engagementPercent}%`;
+
+  // Atualiza contadores
+  card.querySelector(".like-count").textContent = post.like;
+  card.querySelector(".dislike-count").textContent = post.dislike;
+  card.querySelector(".comment-count").textContent = post.comment;
+  card.querySelector(".share-count").textContent = post.share;
+  card.querySelector(".view-count").textContent = post.view;
+  card.querySelector(".time-count").textContent = post.timeSpent;
+  card.querySelector(".save-count").textContent = post.save;
+
+  // Atualiza status de viral/shadowban
+  const viralBadge = card.querySelector(".viral-badge");
+  const shadowbanBadge = card.querySelector(".shadowban-badge");
+
+  if (
+    post.viralBoost > 2.0 &&
+    post.like + post.comment + post.share > 50 &&
+    !viralBadge
+  ) {
+    const badge = document.createElement("span");
+    badge.className = "viral-badge";
+    badge.textContent = "🔥 Viral";
+    card.querySelector(".card-body").prepend(badge);
+  } else if (
+    (post.viralBoost <= 2.0 || post.like + post.comment + post.share <= 50) &&
+    viralBadge
+  ) {
+    viralBadge.remove();
+  }
+
+  if (post.shadowbanned && !shadowbanBadge) {
+    const badge = document.createElement("span");
+    badge.className = "shadowban-badge";
+    badge.textContent = "👁️‍🗨️ Alcance limitado";
+    card.querySelector(".card-body").prepend(badge);
+  } else if (!post.shadowbanned && shadowbanBadge) {
+    shadowbanBadge.remove();
+  }
 }
 
 // 🖥️ RENDERIZAÇÃO DO FEED
@@ -393,12 +557,13 @@ function renderizarFeed() {
   const showShadowbanned = document.getElementById("showShadowbanned").checked;
 
   let visiblePosts = 0;
+  const fragment = document.createDocumentFragment();
 
   posts.forEach((post) => {
     const isInUserCluster = post.cluster === userCluster;
-    const isViral = post.viralBoost > 1.5;
+    const isViral =
+      post.viralBoost > 2.0 && post.like + post.comment + post.share > 50;
 
-    // Aplica filtros
     if (!showViral && isViral) return;
     if (!showOutside && !isInUserCluster) return;
     if (!showShadowbanned && post.shadowbanned) return;
@@ -413,11 +578,12 @@ function renderizarFeed() {
 
     const card = document.createElement("div");
     card.classList.add("col");
+    card.setAttribute("data-id", post.id);
     card.innerHTML = `
       <div class="card ${
         isInUserCluster ? "border-success" : "border-warning"
       } ${post.shadowbanned ? "shadowbanned" : ""}">
-        ${post.isViral ? '<span class="viral-badge">🔥 Viral</span>' : ""}
+        ${isViral ? '<span class="viral-badge">🔥 Viral</span>' : ""}
         ${post.isAd ? '<span class="ad-badge">🛒 Anúncio</span>' : ""}
         ${
           post.shadowbanned
@@ -442,7 +608,7 @@ function renderizarFeed() {
           </div>
           
           ${
-            timeSinceCreation < 2
+            timeSinceCreation < 3
               ? `<small class="text-success d-block mb-2">📈 Novo: +${post.coldStartBoost.toFixed(
                   1
                 )}x boost</small>`
@@ -459,10 +625,13 @@ function renderizarFeed() {
               ${isInUserCluster ? "✅ Sua bolha" : "🌐 Outra bolha"}
             </span><br>
             ${post.isVideo ? "🎥 Vídeo | " : ""}
-            👁️ ${post.view} | 👍 ${post.like} | 👎 ${post.dislike}<br>
-            💬 ${post.comment} | 🔁 ${post.share} | ⏱️ ${
-      post.timeSpent
-    }s | 💾 ${post.save}
+            👁️ <span class="view-count">${post.view}</span> | 
+            👍 <span class="like-count">${post.like}</span> | 
+            👎 <span class="dislike-count">${post.dislike}</span><br>
+            💬 <span class="comment-count">${post.comment}</span> | 
+            🔁 <span class="share-count">${post.share}</span> | 
+            ⏱️ <span class="time-count">${post.timeSpent}</span>s | 
+            💾 <span class="save-count">${post.save}</span>
           </p>
           
           <div class="btn-group flex-wrap">
@@ -488,9 +657,10 @@ function renderizarFeed() {
         </div>
       </div>
     `;
-    feed.appendChild(card);
+    fragment.appendChild(card);
   });
 
+  feed.appendChild(fragment);
   document.getElementById("feedStats").textContent = `${visiblePosts} posts`;
   document
     .getElementById("emptyFeed")
@@ -503,104 +673,135 @@ function interagir(id, tipo) {
   if (!post) return;
 
   // Incrementa a interação principal
-  post[tipo]++;
-  lastInteractionTime = new Date();
+  switch (tipo) {
+    case "like":
+      post.like += Math.floor(Math.random() * 10) + 5; // 5-15 likes
+      break;
+    case "dislike":
+      post.dislike += Math.floor(Math.random() * 5) + 2; // 2-7 dislikes
+      break;
+    case "comment":
+      post.comment += Math.floor(Math.random() * 3) + 1; // 1-4 comments
+      break;
+    case "share":
+      post.share += Math.floor(Math.random() * 4) + 1; // 1-5 shares
+      break;
+    case "save":
+      post.save += Math.floor(Math.random() * 2) + 1; // 1-3 saves
+      break;
+    case "report":
+      post.report += 1;
+      break;
+    case "view":
+      post.view += 1;
+      break;
+  }
 
   // Efeitos secundários
-  post.timeSpent += Math.floor(Math.random() * 20) + 5;
-  if (tipo !== "view") post.view += 3;
+  post.timeSpent += Math.floor(Math.random() * 30) + 10; // 10-40 segundos
+  if (tipo !== "view") post.view += Math.floor(Math.random() * 5) + 3; // 3-8 views adicionais
 
-  // Se for dislike ou report, diminui a afinidade
+  // Força a detecção de emoção
+  const emotionData = detectarEmocao(post);
+  post.emotion = emotionData.emotion;
+  post.emotionName = emotionData.emotionName;
+  post.emotionColor = emotionData.emotionColor;
+
+  // Registra a interação no histórico
+  post.engagementHistory.push({
+    type: tipo,
+    timestamp: new Date(),
+  });
+
+  // Atualiza afinidades
   if (tipo === "dislike" || tipo === "report") {
     userClusterAffinity[post.cluster] = Math.max(
       0,
-      (userClusterAffinity[post.cluster] || 0) - 1.5
+      (userClusterAffinity[post.cluster] || 0) - 3.0
     );
-    userEmotionAffinity[post.emotion] = Math.max(
-      0,
-      (userEmotionAffinity[post.emotion] || 0) - 1.2
-    );
+    if (post.emotion) {
+      userEmotionAffinity[post.emotion] = Math.max(
+        0,
+        (userEmotionAffinity[post.emotion] || 0) - 2.0
+      );
+    }
   } else {
-    // Atualiza afinidades normais
     atualizarAfinidades(post, tipo);
   }
 
-  // Reforço de câmara de eco para interações positivas
-  if (tipo === "like" || tipo === "share" || tipo === "save") {
-    posts
-      .filter((p) => p.cluster === post.cluster)
-      .forEach((p) => {
-        p.score = Math.floor(p.score * 1.05);
-      });
-
-    posts
-      .filter((p) => p.emotion === post.emotion)
-      .forEach((p) => {
-        p.score = Math.floor(p.score * 1.03);
-      });
-  }
-
-  // Recalcula tudo
-  calcularScore();
+  // Recalcula o score e renderiza
+  calcularScorePost(post);
+  calcularScore(); // Reordena todos os posts pelo score
   renderizarFeed();
   atualizarGraficos();
+
+  // Feedback visual
+  const card = document.querySelector(`.card[data-id="${id}"]`);
+  if (card) {
+    card.classList.add("interaction-feedback");
+    setTimeout(() => {
+      card.classList.remove("interaction-feedback");
+    }, 500);
+  }
 }
 
 // 📈 ATUALIZAÇÃO DE AFINIDADES
 function atualizarAfinidades(post, tipo) {
-  // Fator de impacto baseado no tipo de interação
   const interactionImpact =
     {
-      like: 1.8,
-      dislike: 1.3,
-      comment: 2.0,
-      share: 2.2,
-      report: 1.5,
-      save: 1.7,
-      view: 0.4,
+      like: 2.5,
+      dislike: 1.5,
+      comment: 3.0,
+      share: 4.0,
+      report: 2.0,
+      save: 3.5,
+      view: 0.7,
     }[tipo] || 1;
 
-  // Impacto emocional
-  const emotionImpact = EMOTION_TYPES[post.emotion].weight;
-
-  // Atualiza afinidade com o cluster
-  const clusterChange = interactionImpact * emotionImpact * 0.5;
+  // Aumenta o impacto no cluster
+  const clusterChange = interactionImpact * 1.2;
   userClusterAffinity[post.cluster] = Math.max(
     0,
     (userClusterAffinity[post.cluster] || 0) + clusterChange
   );
 
-  // Atualiza afinidade com a emoção
-  const emotionChange = interactionImpact * 0.7;
-  userEmotionAffinity[post.emotion] = Math.max(
-    0,
-    (userEmotionAffinity[post.emotion] || 0) + emotionChange
-  );
+  // Impacto maior na emoção
+  if (post.emotion) {
+    const emotionChange = interactionImpact * 1.5;
+    userEmotionAffinity[post.emotion] = Math.max(
+      0,
+      (userEmotionAffinity[post.emotion] || 0) + emotionChange
+    );
+  }
 
   // Atualiza o cluster principal se necessário
-  updateMainCluster();
+  if (Math.random() > 0.5) {
+    updateMainCluster();
+  }
 }
 
 // 🔄 ATUALIZAÇÃO DO CLUSTER PRINCIPAL
 function updateMainCluster() {
-  const recentInteractions = posts
-    .filter((p) => p.view > 0)
-    .sort((a, b) => b.createdAt - a.createdAt)
-    .slice(0, 10);
-
+  const relevantPosts = posts.filter((p) => p.view > 0);
   const clusterScores = {};
   CLUSTERS.forEach((c) => (clusterScores[c] = 0));
 
-  recentInteractions.forEach((post) => {
+  // Calcula scores com pesos atualizados
+  relevantPosts.forEach((post) => {
     clusterScores[post.cluster] +=
-      post.like * 0.5 + post.comment * 0.8 + post.share * 1.2 + post.save * 1.0;
+      post.like * 2.0 +
+      post.comment * 2.5 +
+      post.share * 3.5 +
+      post.save * 3.0 +
+      post.timeSpent * 0.2;
   });
 
   let newMainCluster = userCluster;
-  let maxScore = 0;
+  let maxScore = clusterScores[userCluster] || 0;
 
+  // Exige uma diferença significativa para mudar de cluster
   for (const cluster in clusterScores) {
-    if (clusterScores[cluster] > maxScore) {
+    if (clusterScores[cluster] > maxScore * 1.3) {
       maxScore = clusterScores[cluster];
       newMainCluster = cluster;
     }
@@ -609,44 +810,64 @@ function updateMainCluster() {
   if (newMainCluster !== userCluster) {
     userCluster = newMainCluster;
     document.getElementById("clusterSelect").value = userCluster;
+    // Reforça a nova preferência
+    userClusterAffinity[userCluster] += 8;
+
+    // Recalcula todos os scores
+    calcularScore();
+    renderizarFeed();
   }
 }
 
 // ⏱️ SIMULAÇÃO DE RABISCO (DWELL TIME)
 function simularRabisco() {
+  const now = new Date();
+
   posts.forEach((post) => {
-    // Se o usuário passou muito tempo no post sem interagir
-    if (post.timeSpent > 30 && post.like === 0 && post.comment === 0) {
-      // Aumenta a afinidade, mas menos que um like explícito
+    // Apenas posts visualizados mas sem interação explícita
+    if (
+      post.view > 0 &&
+      post.like === 0 &&
+      post.comment === 0 &&
+      post.timeSpent > 15
+    ) {
+      // Aumenta afinidade gradualmente
+      const incremento = post.timeSpent / 100;
       userClusterAffinity[post.cluster] = Math.max(
         0,
-        (userClusterAffinity[post.cluster] || 0) + 0.3
+        (userClusterAffinity[post.cluster] || 0) + incremento
       );
-      userEmotionAffinity[post.emotion] = Math.max(
-        0,
-        (userEmotionAffinity[post.emotion] || 0) + 0.2
-      );
+
+      if (post.emotion) {
+        userEmotionAffinity[post.emotion] = Math.max(
+          0,
+          (userEmotionAffinity[post.emotion] || 0) + incremento * 0.8
+        );
+      }
+
+      // Atualiza o post individualmente
+      calcularScorePost(post);
+      atualizarCardPost(post.id);
     }
   });
 
-  // Recalcula se houve mudanças significativas
-  if (Math.random() > 0.7) {
-    calcularScore();
-    renderizarFeed();
+  // Recalcula todos os scores e reordena
+  calcularScore();
+
+  // Atualiza gráficos periodicamente
+  if (now - lastInteractionTime > 30000 || Math.random() > 0.8) {
     atualizarGraficos();
   }
 
-  // Chama a função periodicamente
-  setTimeout(simularRabisco, 30000 + Math.random() * 15000);
+  setTimeout(simularRabisco, 15000 + Math.random() * 15000);
 }
 
-// 📊 ATUALIZAÇÃO DOS GRÁFICOS
+// 📊 ATUALIZAÇÃO DOS GRÁFICOS EM TEMPO REAL
 function atualizarGraficos() {
   const affinityCanvas = document.getElementById("affinityChart");
   const emotionCanvas = document.getElementById("emotionChart");
 
   if (!affinityCanvas || !emotionCanvas) {
-    setTimeout(atualizarGraficos, 100);
     return;
   }
 
@@ -656,7 +877,7 @@ function atualizarGraficos() {
     datasets: [
       {
         label: "Afinidade por Tópico",
-        data: CLUSTERS.map((c) => userClusterAffinity[c] || 0),
+        data: CLUSTERS.map((c) => Math.max(0, userClusterAffinity[c] || 0)),
         backgroundColor: CLUSTERS.map((c) =>
           c === userCluster
             ? "rgba(40, 167, 69, 0.8)"
@@ -667,15 +888,18 @@ function atualizarGraficos() {
     ],
   };
 
-  // Dados de engajamento por emoção
-  const emotions = Object.keys(EMOTION_TYPES);
+  // Dados de engajamento por emoção - mostra todas as emoções
   const emotionData = {
-    labels: emotions.map((e) => EMOTION_TYPES[e].name),
+    labels: Object.keys(EMOTION_TYPES).map((e) => EMOTION_TYPES[e].name),
     datasets: [
       {
         label: "Engajamento por Emoção",
-        data: emotions.map((e) => userEmotionAffinity[e] || 0),
-        backgroundColor: emotions.map((e) => EMOTION_TYPES[e].color),
+        data: Object.keys(EMOTION_TYPES).map(
+          (e) => userEmotionAffinity[e] || 0
+        ),
+        backgroundColor: Object.keys(EMOTION_TYPES).map(
+          (e) => EMOTION_TYPES[e].color
+        ),
         borderWidth: 1,
       },
     ],
@@ -685,7 +909,7 @@ function atualizarGraficos() {
   const commonOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    animation: { duration: 500, easing: "easeOutQuart" },
+    animation: { duration: 300, easing: "easeOutQuart" },
   };
 
   // Atualiza ou cria o gráfico de afinidade
@@ -744,6 +968,12 @@ function formatDate(date) {
 // 🔄 MUDANÇA DE BOLHA
 function mudarBolha(select) {
   userCluster = select.value;
+  // Reforço significativo da preferência manual
+  userClusterAffinity[userCluster] += 15;
+
+  document.getElementById("clusterSelect").value = userCluster;
+
+  // Recalcula tudo para refletir a mudança
   calcularScore();
   renderizarFeed();
   atualizarGraficos();
@@ -759,6 +989,10 @@ function resetarAfinidades() {
     userEmotionAffinity[emotion] = 0;
   });
 
+  // Volta para o cluster padrão
+  userCluster = "tech";
+  document.getElementById("clusterSelect").value = userCluster;
+
   calcularScore();
   renderizarFeed();
   atualizarGraficos();
@@ -766,3 +1000,8 @@ function resetarAfinidades() {
 
 // 🚀 INICIALIZA O SISTEMA
 window.onload = inicializarSistema;
+
+// EXPORTA FUNÇÕES PARA USO GLOBAL
+window.interagir = interagir;
+window.mudarBolha = mudarBolha;
+window.resetarAfinidades = resetarAfinidades;
