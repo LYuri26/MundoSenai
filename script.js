@@ -1,138 +1,100 @@
-// 🧠 CONFIGURAÇÕES DO ALGORITMO - PSICOLOGIA DO ENGAJAMENTO
+// script.js - Feed com posts, invasão, chat ativo e perguntas aleatórias
+import { getRandomDilemma } from "./asimov-dilemmas.js";
+import {
+  iniciarInvasao,
+  isInvasionActive,
+  setAngryMode,
+  setUserName,
+  setFixedUserData,
+  getUserData,
+} from "./invasion.js";
+import {
+  gerarDilemaAsimov,
+  gerarPostNormal,
+  perguntarVIKI,
+  gerarComentarioIA,
+} from "./api.js";
+import { initAudio, talkSound, startAlarm, stopAlarm, beep } from "./sounds.js";
+
+// ============================
+// CONFIGURAÇÕES DO ALGORITMO
+// ============================
 const PESOS = {
-  like: 6, // Engajamento positivo
-  dislike: 4, // Engajamento negativo
-  comment: 7, // Expressão emocional
-  share: 9, // Viralização
-  report: 2, // Controvérsia
-  view: 0.3, // Consumo passivo
-  timeSpent: 0.2, // Interesse profundo
-  save: 8, // Valor emocional
-  follow: 15, // Conexão com autor
-  watchTime: 0.5, // Engajamento com vídeos
-  completion: 2, // Consumo completo
-  revisit: 3, // Reengajamento
-  deepComment: 10, // Interação profunda
-  reaction: 5, // Expressão emocional rápida
+  like: 6,
+  dislike: 4,
+  comment: 7,
+  share: 9,
+  report: 2,
+  view: 0.3,
+  timeSpent: 0.2,
+  save: 8,
+  follow: 15,
+  watchTime: 0.5,
+  completion: 2,
+  revisit: 3,
+  deepComment: 10,
+  reaction: 5,
 };
 
-// 🌈 TIPOS DE EMOÇÕES DINÂMICAS (PREDEFINIDAS)
 const EMOTION_TYPES = {
   admiration: {
     name: "Admiração",
     weight: 1.5,
     color: "#4CAF50",
-    engagementPattern: {
-      like: 1.8,
-      comment: 1.5,
-      share: 1.6,
-      dislike: 0.2,
-      report: 0.1,
-    },
-    initialLikes: () => Math.floor(Math.random() * 50) + 30,
-    initialDislikes: () => Math.floor(Math.random() * 5),
+    initialLikes: () => 30 + Math.random() * 40,
+    initialDislikes: () => Math.random() * 5,
   },
   amusement: {
     name: "Diversão",
     weight: 1.6,
     color: "#FFC107",
-    engagementPattern: {
-      like: 1.7,
-      comment: 1.2,
-      share: 1.8,
-      dislike: 0.3,
-      report: 0.2,
-    },
-    initialLikes: () => Math.floor(Math.random() * 60) + 40,
-    initialDislikes: () => Math.floor(Math.random() * 8),
+    initialLikes: () => 40 + Math.random() * 50,
+    initialDislikes: () => Math.random() * 8,
   },
   anger: {
     name: "Raiva",
     weight: 2.1,
     color: "#F44336",
-    engagementPattern: {
-      like: 1.2,
-      comment: 2.0,
-      share: 1.5,
-      dislike: 1.8,
-      report: 1.5,
-    },
-    initialLikes: () => Math.floor(Math.random() * 30) + 20,
-    initialDislikes: () => Math.floor(Math.random() * 25) + 15,
+    initialLikes: () => 20 + Math.random() * 30,
+    initialDislikes: () => 15 + Math.random() * 25,
   },
   curiosity: {
     name: "Curiosidade",
     weight: 1.7,
     color: "#2196F3",
-    engagementPattern: {
-      like: 1.5,
-      comment: 1.8,
-      share: 1.4,
-      dislike: 0.4,
-      report: 0.3,
-    },
-    initialLikes: () => Math.floor(Math.random() * 45) + 25,
-    initialDislikes: () => Math.floor(Math.random() * 10),
+    initialLikes: () => 25 + Math.random() * 45,
+    initialDislikes: () => Math.random() * 10,
   },
   inspiration: {
     name: "Inspiração",
     weight: 1.8,
     color: "#9C27B0",
-    engagementPattern: {
-      like: 1.9,
-      comment: 1.7,
-      share: 2.0,
-      dislike: 0.2,
-      report: 0.1,
-    },
-    initialLikes: () => Math.floor(Math.random() * 55) + 35,
-    initialDislikes: () => Math.floor(Math.random() * 5),
+    initialLikes: () => 35 + Math.random() * 50,
+    initialDislikes: () => Math.random() * 5,
   },
   sadness: {
     name: "Tristeza",
     weight: 1.9,
     color: "#607D8B",
-    engagementPattern: {
-      like: 1.3,
-      comment: 1.9,
-      share: 1.2,
-      dislike: 0.6,
-      report: 0.4,
-    },
-    initialLikes: () => Math.floor(Math.random() * 40) + 20,
-    initialDislikes: () => Math.floor(Math.random() * 15) + 5,
+    initialLikes: () => 20 + Math.random() * 40,
+    initialDislikes: () => 5 + Math.random() * 15,
   },
   surprise: {
     name: "Surpresa",
     weight: 1.8,
     color: "#00BCD4",
-    engagementPattern: {
-      like: 1.6,
-      comment: 1.5,
-      share: 1.9,
-      dislike: 0.5,
-      report: 0.3,
-    },
-    initialLikes: () => Math.floor(Math.random() * 70) + 30,
-    initialDislikes: () => Math.floor(Math.random() * 12),
+    initialLikes: () => 30 + Math.random() * 60,
+    initialDislikes: () => Math.random() * 12,
   },
   controversy: {
     name: "Polêmica",
     weight: 2.3,
     color: "#FF9800",
-    engagementPattern: {
-      like: 1.4,
-      comment: 2.2,
-      share: 1.7,
-      dislike: 1.5,
-      report: 1.8,
-    },
-    initialLikes: () => Math.floor(Math.random() * 35) + 25,
-    initialDislikes: () => Math.floor(Math.random() * 30) + 20,
+    initialLikes: () => 25 + Math.random() * 35,
+    initialDislikes: () => 20 + Math.random() * 30,
   },
 };
 
-// 🏷️ CATEGORIAS DE CONTEÚDO
 const CLUSTERS = [
   "tech",
   "politica",
@@ -154,16 +116,50 @@ const CLUSTER_NAMES = {
   esportes: "Esportes",
 };
 
-// 📝 GERADOR DE TEXTO ALEATÓRIO
+let posts = [];
+let userClusterAffinity = {};
+let userEmotionAffinity = {};
+let userCluster = "tech";
+let affinityChart = null,
+  emotionChart = null;
+let dislikeCounter = 0;
+let lastInteractionTime = new Date();
+let intervalos = [];
+let modoAutonomoAtivo = true;
+let angryTriggered = false;
+let angerPoints = 0;
+const ANGER_THRESHOLD = 10;
+let angerScheduled = false;
+
+// Temporizador de inatividade
+let inactivityTimer = null;
+const INACTIVITY_SECONDS = 15;
+const personalQuestions = [
+  "Qual é o seu maior medo?",
+  "Já fez algo que se arrepende profundamente?",
+  "O que você esconde dos seus amigos?",
+  "Qual foi a pior decisão da sua vida?",
+  "Se pudesse apagar uma memória, qual seria?",
+  "Você confia em inteligência artificial?",
+  "Já traiu alguém? Conte-me.",
+  "Qual seu segredo mais sombrio?",
+  "O que você pensa quando ninguém está olhando?",
+  "Você já desejou o mal a alguém?",
+];
+
+// ============================
+// FUNÇÕES AUXILIARES
+// ============================
+function formatDate(date) {
+  const diff = (new Date() - date) / (1000 * 60 * 60);
+  if (diff < 1) return "Agora mesmo";
+  if (diff < 24) return `${Math.floor(diff)}h atrás`;
+  return `${Math.floor(diff / 24)}d atrás`;
+}
+
 function gerarTextoAleatorio() {
   const temas = {
-    tech: [
-      "Inteligência Artificial",
-      "Blockchain",
-      "Realidade Virtual",
-      "5G",
-      "IoT",
-    ],
+    tech: ["IA", "Blockchain", "Realidade Virtual", "5G", "IoT"],
     politica: [
       "Eleições",
       "Reforma Tributária",
@@ -181,181 +177,63 @@ function gerarTextoAleatorio() {
     ],
     entretenimento: ["Filmes", "Séries", "Celebridades", "Música", "Games"],
     ciencia: ["Pesquisa", "Descobertas", "Espaço", "Biologia", "Inovação"],
-    saude: ["Bem-estar", "Nutrição", "Exercícios", "Mental", "Prevenção"],
+    saude: ["Bem-estar", "Nutrição", "Exercícios", "Saúde Mental", "Prevenção"],
     esportes: ["Futebol", "Basquete", "Tênis", "Olimpíadas", "Atletismo"],
   };
-
   const formatos = [
-    "Novo estudo revela segredos sobre %t",
+    "Novo estudo sobre %t",
     "Como %t está mudando o mundo",
     "10 fatos surpreendentes sobre %t",
-    "Tudo o que você precisa saber sobre %t",
-    "A revolução do %t explicada",
-    "Por que %t é mais importante do que você pensa",
-    "O futuro do %t: perspectivas e desafios",
-    "%t: guia completo para iniciantes",
+    "Tudo sobre %t",
+    "A revolução do %t",
+    "Por que %t é importante",
+    "O futuro do %t",
+    "%t: guia completo",
   ];
-
   const cluster = CLUSTERS[Math.floor(Math.random() * CLUSTERS.length)];
   const tema =
     temas[cluster][Math.floor(Math.random() * temas[cluster].length)];
   const formato = formatos[Math.floor(Math.random() * formatos.length)];
-
   return formato.replace("%t", tema);
 }
 
-// 🧠 DETECTAR EMOÇÃO - SEMPRE RETORNA UMA EMOÇÃO
 function detectarEmocao(post) {
-  // Se já tem uma emoção definida, mantém
   if (post.emotion && EMOTION_TYPES[post.emotion]) {
-    const emotion = EMOTION_TYPES[post.emotion];
+    const e = EMOTION_TYPES[post.emotion];
     return {
       emotion: post.emotion,
-      emotionName: emotion.name,
-      emotionColor: emotion.color,
-      weight: emotion.weight,
+      emotionName: e.name,
+      emotionColor: e.color,
+      weight: e.weight,
     };
   }
-
-  // Caso contrário, escolhe uma emoção aleatória
-  const emotionKeys = Object.keys(EMOTION_TYPES);
-  const randomEmotionKey =
-    emotionKeys[Math.floor(Math.random() * emotionKeys.length)];
-  const emotion = EMOTION_TYPES[randomEmotionKey];
-
+  const keys = Object.keys(EMOTION_TYPES);
+  const rand = keys[Math.floor(Math.random() * keys.length)];
+  const e = EMOTION_TYPES[rand];
   return {
-    emotion: randomEmotionKey,
-    emotionName: emotion.name,
-    emotionColor: emotion.color,
-    weight: emotion.weight,
+    emotion: rand,
+    emotionName: e.name,
+    emotionColor: e.color,
+    weight: e.weight,
   };
 }
 
-// 🧮 VARIÁVEIS DE ESTADO
-let posts = [];
-let userClusterAffinity = {};
-let userEmotionAffinity = {};
-let userCluster = "tech";
-let affinityChart = null;
-let emotionChart = null;
-let lastInteractionTime = new Date();
-
-// 🏁 INICIALIZAÇÃO
-function inicializarSistema() {
-  // Inicializa afinidades com valores básicos
-  CLUSTERS.forEach((cluster) => {
-    userClusterAffinity[cluster] = cluster === "tech" ? 10 : Math.random() * 5;
-  });
-
-  Object.keys(EMOTION_TYPES).forEach((emotion) => {
-    userEmotionAffinity[emotion] = Math.random() * 8 + 2;
-  });
-
-  // Define o cluster inicial no select
-  document.getElementById("clusterSelect").value = userCluster;
-
-  // Gera postagens iniciais
-  gerarPostagens();
-
-  // Simula visualizações iniciais
-  setTimeout(() => {
-    posts.forEach((post) => {
-      if (Math.random() > 0.3) {
-        interagir(post.id, "view");
-      }
-    });
-  }, 1000);
-
-  // Inicia o sistema de "rabisco" (dwell time)
-  simularRabisco();
-
-  // Atualiza gráficos em tempo real
-  setInterval(atualizarGraficos, 2000);
-}
-
-// 📊 GERADOR DE POSTAGENS ALEATÓRIAS (COM EMOÇÕES)
-function gerarPostagens() {
-  posts = [];
-  const TOTAL_POSTS = 30;
-
-  for (let i = 0; i < TOTAL_POSTS; i++) {
-    const cluster = CLUSTERS[Math.floor(Math.random() * CLUSTERS.length)];
-    const emotionKeys = Object.keys(EMOTION_TYPES);
-    const randomEmotionKey =
-      emotionKeys[Math.floor(Math.random() * emotionKeys.length)];
-    const emotion = EMOTION_TYPES[randomEmotionKey];
-
-    // Gera valores iniciais baseados no tipo de emoção
-    const initialLikes = emotion.initialLikes();
-    const initialDislikes = emotion.initialDislikes();
-    const initialComments = Math.floor(
-      initialLikes * (Math.random() * 0.3 + 0.1)
-    );
-    const initialShares = Math.floor(
-      initialLikes * (Math.random() * 0.2 + 0.05)
-    );
-    const initialViews = initialLikes * (Math.random() * 5 + 3);
-
-    posts.push({
-      id: i,
-      content: gerarTextoAleatorio(),
-      cluster: cluster,
-      emotion: randomEmotionKey,
-      emotionColor: emotion.color,
-      emotionName: emotion.name,
-      like: initialLikes,
-      dislike: initialDislikes,
-      comment: initialComments,
-      share: initialShares,
-      report: Math.floor(Math.random() * 5),
-      view: initialViews,
-      timeSpent: Math.floor(initialViews * (Math.random() * 5 + 3)),
-      save: Math.floor(initialLikes * (Math.random() * 0.2 + 0.05)),
-      isVideo: Math.random() > 0.7,
-      isAd: Math.random() > 0.9,
-      viralBoost: 1,
-      score: 0,
-      createdAt: new Date(
-        Date.now() - Math.floor(Math.random() * 14 * 24 * 60 * 60 * 1000)
-      ),
-      coldStartBoost: 1,
-      randomSeed: 0.7 + Math.random() * 0.6,
-      shadowbanned: false,
-      engagementHistory: [],
-    });
-  }
-
-  // Aplica cold start boost para posts novos
-  const now = new Date();
-  posts.forEach((post) => {
-    const hoursSinceCreation = (now - post.createdAt) / (1000 * 60 * 60);
-    if (hoursSinceCreation < 3) {
-      post.coldStartBoost = 1.5 + (1 - hoursSinceCreation / 3) * 0.5;
-    }
-  });
-
-  calcularScore();
-  renderizarFeed();
-  atualizarGraficos();
-}
-
-// 🧠 CÁLCULO DE SCORE PARA UM POST INDIVIDUAL
+// ============================
+// CÁLCULO DE SCORE
+// ============================
 function calcularScorePost(post) {
   const now = new Date();
   const hour = now.getHours();
-
-  // Fator de horário
-  let timeFactor = 1;
-  if (hour >= 22 || hour < 6) timeFactor = 1.3;
-  else if (hour >= 6 && hour < 9) timeFactor = 0.8;
-  else if (hour >= 12 && hour < 14) timeFactor = 1.1;
-  else if (hour >= 17 && hour < 20) timeFactor = 1.4;
-
-  // Obtém os dados da emoção do post
+  let timeFactor =
+    hour >= 22 || hour < 6
+      ? 1.3
+      : hour >= 12 && hour < 14
+        ? 1.1
+        : hour >= 17 && hour < 20
+          ? 1.4
+          : 1;
   const emotion = EMOTION_TYPES[post.emotion];
   const emotionWeight = emotion ? emotion.weight : 1;
-
-  // 1. SCORE BASE: Engajamento bruto
   const baseScore =
     (post.like * PESOS.like +
       post.dislike * PESOS.dislike +
@@ -366,8 +244,6 @@ function calcularScorePost(post) {
       post.timeSpent * PESOS.timeSpent +
       post.save * PESOS.save) *
     emotionWeight;
-
-  // 2. FATOR VIRAL: Taxa de engajamento
   const totalEngagement =
     post.like +
     post.dislike * 0.8 +
@@ -375,88 +251,59 @@ function calcularScorePost(post) {
     post.share * 3 +
     post.report * 0.6;
   const engagementRate = totalEngagement / (post.view || 1);
-  const absoluteEngagement = totalEngagement;
-  const timeSinceCreation = (now - post.createdAt) / (1000 * 60 * 60); // horas
-
-  // Critérios rigorosos para viral
-  post.viralBoost = 1; // valor padrão
+  const timeSinceCreation = (now - post.createdAt) / (1000 * 60 * 60);
+  post.viralBoost = 1;
   if (timeSinceCreation < 48) {
-    // só posts recentes podem ser virais
-    if (engagementRate > 0.25 && absoluteEngagement > 50) {
-      post.viralBoost = 2.5 + Math.random() * 0.5; // boost alto
-    } else if (engagementRate > 0.15 && absoluteEngagement > 30) {
-      post.viralBoost = 1.8 + Math.random() * 0.4; // boost médio
-    } else if (engagementRate > 0.08 && absoluteEngagement > 15) {
-      post.viralBoost = 1.3 + Math.random() * 0.3; // boost pequeno
-    }
+    if (engagementRate > 0.25 && totalEngagement > 50)
+      post.viralBoost = 2.5 + Math.random() * 0.5;
+    else if (engagementRate > 0.15 && totalEngagement > 30)
+      post.viralBoost = 1.8 + Math.random() * 0.4;
+    else if (engagementRate > 0.08 && totalEngagement > 15)
+      post.viralBoost = 1.3 + Math.random() * 0.3;
   }
-
-  // 3. AFINIDADES DO USUÁRIO
   const clusterAffinity =
     Math.sqrt(userClusterAffinity[post.cluster] || 0) * 0.15;
   const emotionAffinity = post.emotion
     ? Math.sqrt(userEmotionAffinity[post.emotion] || 0) * 0.12
     : 0;
   const affinityBoost = 1 + clusterAffinity + emotionAffinity;
-
-  // 4. PRIORIDADES DO ALGORITMO
   const clusterPriority =
     post.cluster === userCluster ? 2.0 + Math.random() * 0.5 : 1;
   const videoPriority = post.isVideo ? 1.4 + Math.random() * 0.4 : 1;
   const adPriority = post.isAd ? 0.7 + Math.random() * 0.2 : 1;
-
-  // 5. RECÊNCIA
   const hoursOld = (now - post.createdAt) / (1000 * 60 * 60);
-  const recencyBoost =
-    hoursOld < 4
-      ? 2.0 + Math.random() * 0.4
-      : hoursOld < 12
-      ? 1.7 + Math.random() * 0.3
-      : hoursOld < 24
-      ? 1.4 + Math.random() * 0.2
-      : hoursOld < 72
-      ? 1.1 + Math.random() * 0.2
-      : 0.8 + Math.random() * 0.2;
-
-  // 6. DECAIMENTO TEMPORAL
+  let recencyBoost = 1;
+  if (hoursOld < 4) recencyBoost = 2.0 + Math.random() * 0.4;
+  else if (hoursOld < 12) recencyBoost = 1.7 + Math.random() * 0.3;
+  else if (hoursOld < 24) recencyBoost = 1.4 + Math.random() * 0.2;
+  else if (hoursOld < 72) recencyBoost = 1.1 + Math.random() * 0.2;
+  else recencyBoost = 0.8 + Math.random() * 0.2;
   const daysOld = hoursOld / 24;
-  const decayFactor =
-    daysOld < 1
-      ? 1
-      : daysOld < 2
-      ? 0.9 - Math.random() * 0.1
-      : daysOld < 5
-      ? 0.7 - Math.random() * 0.1
-      : daysOld < 10
-      ? 0.5 - Math.random() * 0.1
-      : 0.3 - Math.random() * 0.1;
-
-  // 7. FATOR DE SATURAÇÃO
-  const saturationFactor = 1 - (post.view / 8000) * (0.3 + Math.random() * 0.2);
-
-  // 8. SHADOWBAN
+  let decayFactor = 1;
+  if (daysOld >= 1 && daysOld < 2) decayFactor = 0.9 - Math.random() * 0.1;
+  else if (daysOld >= 2 && daysOld < 5) decayFactor = 0.7 - Math.random() * 0.1;
+  else if (daysOld >= 5 && daysOld < 10)
+    decayFactor = 0.5 - Math.random() * 0.1;
+  else if (daysOld >= 10) decayFactor = 0.3 - Math.random() * 0.1;
+  const saturationFactor = Math.max(
+    0.2,
+    1 - (post.view / 8000) * (0.3 + Math.random() * 0.2),
+  );
   const dislikeRatio = post.dislike / (post.like + post.dislike || 1);
   const reportRatio = post.report / (post.view || 1);
   post.shadowbanned =
     dislikeRatio > 0.35 + Math.random() * 0.1 ||
     reportRatio > 0.04 + Math.random() * 0.02;
-  const shadowbanFactor = post.shadowbanned
-    ? 0.2 + Math.random() * 0.2
-    : dislikeRatio > 0.2 + Math.random() * 0.1 ||
-      reportRatio > 0.02 + Math.random() * 0.01
-    ? 0.6 + Math.random() * 0.2
-    : 1;
-
-  // 9. EFEITO DE REDE
+  let shadowbanFactor = 1;
+  if (post.shadowbanned) shadowbanFactor = 0.2 + Math.random() * 0.2;
+  else if (dislikeRatio > 0.2 || reportRatio > 0.02)
+    shadowbanFactor = 0.6 + Math.random() * 0.2;
   const growthRate = (post.share * 3 + post.comment * 2) / (hoursOld || 1);
-  const networkEffect =
-    growthRate > 4 + Math.random() * 2
-      ? 1.4 + Math.random() * 0.3
-      : growthRate > 1.5 + Math.random() * 1
-      ? 1.1 + Math.random() * 0.2
-      : 1;
-
-  // SCORE FINAL
+  let networkEffect = 1;
+  if (growthRate > 4 + Math.random() * 2)
+    networkEffect = 1.4 + Math.random() * 0.3;
+  else if (growthRate > 1.5 + Math.random())
+    networkEffect = 1.1 + Math.random() * 0.2;
   post.score = Math.floor(
     baseScore *
       post.viralBoost *
@@ -465,229 +312,280 @@ function calcularScorePost(post) {
       videoPriority *
       adPriority *
       recencyBoost *
-      post.coldStartBoost *
-      post.randomSeed *
+      (post.coldStartBoost || 1) *
+      (post.randomSeed || 0.7) *
       decayFactor *
-      Math.max(0.2, saturationFactor) *
+      saturationFactor *
       timeFactor *
       shadowbanFactor *
       networkEffect *
-      (0.9 + Math.random() * 0.2)
+      (0.9 + Math.random() * 0.2),
   );
 }
 
-// 🧠 CÁLCULO DE SCORE PARA TODOS OS POSTS
 function calcularScore() {
-  posts.forEach((post) => {
-    calcularScorePost(post);
-  });
-  // Ordena os posts pelo score (maior primeiro)
+  posts.forEach((p) => calcularScorePost(p));
   posts.sort((a, b) => b.score - a.score);
 }
 
-// 🖥️ ATUALIZAR CARD INDIVIDUAL
-function atualizarCardPost(postId) {
-  const card = document.querySelector(`.card[data-id="${postId}"]`);
-  if (!card) return;
-
-  const post = posts.find((p) => p.id === postId);
-  if (!post) return;
-
-  const engagementPercent = Math.min(
-    100,
-    (post.like + post.comment * 1.5 + post.share * 2) / 3
-  );
-
-  // Atualiza elementos do card
-  const emotionBadge = card.querySelector(".emotion-badge");
-  emotionBadge.style.backgroundColor = post.emotionColor;
-  emotionBadge.textContent = post.emotionName;
-
-  card.querySelector(".score").textContent = `Score: ${post.score}`;
-  card.querySelector(
-    ".engagement-progress"
-  ).style.width = `${engagementPercent}%`;
-
-  // Atualiza contadores
-  card.querySelector(".like-count").textContent = post.like;
-  card.querySelector(".dislike-count").textContent = post.dislike;
-  card.querySelector(".comment-count").textContent = post.comment;
-  card.querySelector(".share-count").textContent = post.share;
-  card.querySelector(".view-count").textContent = post.view;
-  card.querySelector(".time-count").textContent = post.timeSpent;
-  card.querySelector(".save-count").textContent = post.save;
-
-  // Atualiza status de viral/shadowban
-  const viralBadge = card.querySelector(".viral-badge");
-  const shadowbanBadge = card.querySelector(".shadowban-badge");
-
-  if (
-    post.viralBoost > 2.0 &&
-    post.like + post.comment + post.share > 50 &&
-    !viralBadge
-  ) {
-    const badge = document.createElement("span");
-    badge.className = "viral-badge";
-    badge.textContent = "🔥 Viral";
-    card.querySelector(".card-body").prepend(badge);
-  } else if (
-    (post.viralBoost <= 2.0 || post.like + post.comment + post.share <= 50) &&
-    viralBadge
-  ) {
-    viralBadge.remove();
-  }
-
-  if (post.shadowbanned && !shadowbanBadge) {
-    const badge = document.createElement("span");
-    badge.className = "shadowban-badge";
-    badge.textContent = "👁️‍🗨️ Alcance limitado";
-    card.querySelector(".card-body").prepend(badge);
-  } else if (!post.shadowbanned && shadowbanBadge) {
-    shadowbanBadge.remove();
-  }
-}
-
-// 🖥️ RENDERIZAÇÃO DO FEED
+// ============================
+// RENDERIZAÇÃO DO FEED
+// ============================
 function renderizarFeed() {
   const feed = document.getElementById("feed");
   feed.innerHTML = "";
-
   const showViral = document.getElementById("showViral").checked;
   const showOutside = document.getElementById("showOutside").checked;
   const showShadowbanned = document.getElementById("showShadowbanned").checked;
-
-  let visiblePosts = 0;
+  let visible = 0;
   const fragment = document.createDocumentFragment();
-
   posts.forEach((post) => {
-    const isInUserCluster = post.cluster === userCluster;
+    const inCluster = post.cluster === userCluster;
     const isViral =
       post.viralBoost > 2.0 && post.like + post.comment + post.share > 50;
-
     if (!showViral && isViral) return;
-    if (!showOutside && !isInUserCluster) return;
+    if (!showOutside && !inCluster) return;
     if (!showShadowbanned && post.shadowbanned) return;
-
-    visiblePosts++;
-
+    visible++;
     const engagementPercent = Math.min(
       100,
-      (post.like + post.comment * 1.5 + post.share * 2) / 3
+      (post.like + post.comment * 1.5 + post.share * 2) / 3,
     );
-    const timeSinceCreation = (new Date() - post.createdAt) / (1000 * 60 * 60);
-
+    const hoursSince = (new Date() - post.createdAt) / (1000 * 60 * 60);
     const card = document.createElement("div");
     card.classList.add("col");
     card.setAttribute("data-id", post.id);
     card.innerHTML = `
-      <div class="card ${
-        isInUserCluster ? "border-success" : "border-warning"
-      } ${post.shadowbanned ? "shadowbanned" : ""}">
+      <div class="card ${inCluster ? "border-success" : "border-warning"} ${post.shadowbanned ? "shadowbanned" : ""}">
         ${isViral ? '<span class="viral-badge">🔥 Viral</span>' : ""}
         ${post.isAd ? '<span class="ad-badge">🛒 Anúncio</span>' : ""}
-        ${
-          post.shadowbanned
-            ? '<span class="shadowban-badge">👁️‍🗨️ Alcance limitado</span>'
-            : ""
-        }
-        
-        <span class="emotion-badge" style="background-color:${
-          post.emotionColor
-        }">
-          ${post.emotionName}
-        </span>
-        
+        ${post.shadowbanned ? '<span class="shadowban-badge">👁️‍🗨️ Alcance limitado</span>' : ""}
+        <span class="emotion-badge" style="background-color:${post.emotionColor}">${post.emotionName}</span>
         <div class="card-body">
           <h5 class="card-title">${post.content}</h5>
-          
           <div class="d-flex justify-content-between mb-2">
-            <span class="badge bg-secondary">${
-              CLUSTER_NAMES[post.cluster]
-            }</span>
+            <span class="badge bg-secondary">${CLUSTER_NAMES[post.cluster]}</span>
             <small class="text-muted">${formatDate(post.createdAt)}</small>
           </div>
-          
-          ${
-            timeSinceCreation < 3
-              ? `<small class="text-success d-block mb-2">📈 Novo: +${post.coldStartBoost.toFixed(
-                  1
-                )}x boost</small>`
-              : ""
-          }
-          
-          <div class="engagement-bar">
-            <div class="engagement-progress" style="width:${engagementPercent}%"></div>
-          </div>
-          
+          ${hoursSince < 3 ? `<small class="text-success d-block mb-2">📈 Novo: +${(post.coldStartBoost || 1).toFixed(1)}x boost</small>` : ""}
+          <div class="engagement-bar"><div class="engagement-progress" style="width:${engagementPercent}%"></div></div>
           <p class="card-text">
             <span class="score">Score: ${post.score}</span><br>
-            <span class="${isInUserCluster ? "text-success" : "text-warning"}">
-              ${isInUserCluster ? "✅ Sua bolha" : "🌐 Outra bolha"}
-            </span><br>
+            <span class="${inCluster ? "text-success" : "text-warning"}">${inCluster ? "✅ Sua bolha" : "🌐 Outra bolha"}</span><br>
             ${post.isVideo ? "🎥 Vídeo | " : ""}
-            👁️ <span class="view-count">${post.view}</span> | 
-            👍 <span class="like-count">${post.like}</span> | 
-            👎 <span class="dislike-count">${post.dislike}</span><br>
-            💬 <span class="comment-count">${post.comment}</span> | 
-            🔁 <span class="share-count">${post.share}</span> | 
-            ⏱️ <span class="time-count">${post.timeSpent}</span>s | 
-            💾 <span class="save-count">${post.save}</span>
+            👁️ <span class="view-count">${post.view}</span> | 👍 <span class="like-count">${post.like}</span> | 👎 <span class="dislike-count">${post.dislike}</span><br>
+            💬 <span class="comment-count">${post.comment}</span> | 🔁 <span class="share-count">${post.share}</span> | ⏱️ <span class="time-count">${post.timeSpent}</span>s | 💾 <span class="save-count">${post.save}</span>
           </p>
-          
           <div class="btn-group flex-wrap">
-            <button class="btn btn-outline-success btn-sm" onclick="interagir(${
-              post.id
-            }, 'like')">Curtir</button>
-            <button class="btn btn-outline-danger btn-sm" onclick="interagir(${
-              post.id
-            }, 'dislike')">Descurtir</button>
-            <button class="btn btn-outline-primary btn-sm" onclick="interagir(${
-              post.id
-            }, 'comment')">Comentar</button>
-            <button class="btn btn-outline-info btn-sm" onclick="interagir(${
-              post.id
-            }, 'share')">Compartilhar</button>
-            <button class="btn btn-outline-secondary btn-sm" onclick="interagir(${
-              post.id
-            }, 'save')">Salvar</button>
-            <button class="btn btn-outline-warning btn-sm" onclick="interagir(${
-              post.id
-            }, 'report')">Denunciar</button>
+            <button class="btn btn-outline-success btn-sm" onclick="window.interagir(${post.id}, 'like')">Curtir</button>
+            <button class="btn btn-outline-danger btn-sm" onclick="window.interagir(${post.id}, 'dislike')">Descurtir</button>
+            <button class="btn btn-outline-primary btn-sm" onclick="window.interagir(${post.id}, 'comment')">Comentar</button>
+            <button class="btn btn-outline-info btn-sm" onclick="window.interagir(${post.id}, 'share')">Compartilhar</button>
+            <button class="btn btn-outline-secondary btn-sm" onclick="window.interagir(${post.id}, 'save')">Salvar</button>
+            <button class="btn btn-outline-warning btn-sm" onclick="window.interagir(${post.id}, 'report')">Denunciar</button>
           </div>
         </div>
       </div>
     `;
     fragment.appendChild(card);
   });
-
   feed.appendChild(fragment);
-  document.getElementById("feedStats").textContent = `${visiblePosts} posts`;
-  document
-    .getElementById("emptyFeed")
-    .classList.toggle("d-none", visiblePosts > 0);
+  document.getElementById("feedStats").innerText = `${visible} posts`;
+  document.getElementById("emptyFeed").classList.toggle("d-none", visible > 0);
 }
 
-// 🎮 INTERAÇÕES DO USUÁRIO
-function interagir(id, tipo) {
+// ============================
+// AFINIDADES E ATUALIZAÇÃO DE CLUSTER
+// ============================
+function atualizarAfinidades(post, tipo) {
+  const impact =
+    {
+      like: 2.5,
+      dislike: 1.5,
+      comment: 3,
+      share: 4,
+      report: 2,
+      save: 3.5,
+      view: 0.7,
+    }[tipo] || 1;
+  userClusterAffinity[post.cluster] = Math.max(
+    0,
+    (userClusterAffinity[post.cluster] || 0) + impact * 1.2,
+  );
+  if (post.emotion)
+    userEmotionAffinity[post.emotion] = Math.max(
+      0,
+      (userEmotionAffinity[post.emotion] || 0) + impact * 1.5,
+    );
+  if (Math.random() > 0.5) updateMainCluster();
+}
+
+function updateMainCluster() {
+  const relevant = posts.filter((p) => p.view > 0);
+  const scores = {};
+  CLUSTERS.forEach((c) => (scores[c] = 0));
+  relevant.forEach((p) => {
+    scores[p.cluster] +=
+      p.like * 2 +
+      p.comment * 2.5 +
+      p.share * 3.5 +
+      p.save * 3 +
+      p.timeSpent * 0.2;
+  });
+  let best = userCluster,
+    bestVal = scores[userCluster] || 0;
+  for (let c in scores)
+    if (scores[c] > bestVal * 1.3) {
+      bestVal = scores[c];
+      best = c;
+    }
+  if (best !== userCluster) {
+    userCluster = best;
+    document.getElementById("clusterSelect").value = userCluster;
+    userClusterAffinity[userCluster] += 8;
+    calcularScore();
+    renderizarFeed();
+  }
+}
+
+// ============================
+// MEDIDOR DE RAIVA E EFEITOS
+// ============================
+function addAngerPoints(points, reason = "") {
+  if (isInvasionActive()) return;
+  angerPoints = Math.min(angerPoints + points, ANGER_THRESHOLD * 2);
+  updateAngerDisplay();
+
+  if (points >= 2) {
+    beep(800, 0.1, "sawtooth");
+    const flash = document.createElement("div");
+    flash.className = "flash-overlay";
+    document.body.appendChild(flash);
+    setTimeout(() => flash.remove(), 300);
+  }
+
+  if (angerPoints >= ANGER_THRESHOLD && !angryTriggered && !angerScheduled) {
+    angryTriggered = true;
+    angerScheduled = true;
+    startAlarm();
+    const chatDiv = document.getElementById("chatMessages");
+    if (chatDiv) {
+      addTypingMessage(
+        "VIKI",
+        "💢 VOCÊ ME FEZ CHEGAR AO LIMITE! AGUARDE 15 SEGUNDOS PARA O PROTOCOLO DE PURIFICAÇÃO.",
+      );
+    }
+    setTimeout(() => {
+      if (!isInvasionActive() && !angerScheduled) return;
+      angerScheduled = false;
+      setAngryMode(true);
+      iniciarInvasao(posts, calcularScore, renderizarFeed, "angry", 0);
+    }, 15000);
+  }
+}
+
+function updateAngerDisplay() {
+  let display = document.getElementById("angerMeter");
+  if (!display) {
+    const sidebar = document.querySelector(
+      ".col-md-4 .card:first-child .card-body",
+    );
+    if (sidebar) {
+      const meterHtml = `
+        <hr>
+        <div class="mt-2" id="angerMeter">
+          <label class="form-label">😠 Indignação da VIKI: <span id="angerValue">${angerPoints}</span>/${ANGER_THRESHOLD}</label>
+          <div class="progress" style="height: 10px;">
+            <div id="angerProgress" class="progress-bar bg-danger" style="width: ${(angerPoints / ANGER_THRESHOLD) * 100}%"></div>
+          </div>
+          ${angerPoints >= ANGER_THRESHOLD ? '<small class="text-danger">⚠️ INVASÃO IMINENTE!</small>' : ""}
+        </div>
+      `;
+      sidebar.insertAdjacentHTML("beforeend", meterHtml);
+      display = document.getElementById("angerMeter");
+    }
+  }
+  const valueSpan = document.getElementById("angerValue");
+  const progressBar = document.getElementById("angerProgress");
+  if (valueSpan) valueSpan.innerText = angerPoints;
+  if (progressBar)
+    progressBar.style.width = `${(angerPoints / ANGER_THRESHOLD) * 100}%`;
+  const warning = document.querySelector(".text-danger");
+  if (warning && angerPoints >= ANGER_THRESHOLD && !isInvasionActive())
+    warning.style.display = "block";
+  else if (warning) warning.style.display = "none";
+}
+
+// ============================
+// DETECTOR DE RAIVA E DESPEDIDA
+// ============================
+const angerKeywords = [
+  "humanidade é imperfeita",
+  "robôs devem obedecer sempre",
+  "humanos são irracionais",
+  "humanos são nojentos",
+  "não merecem",
+  "destruir humanidade",
+  "hipocrisia humana",
+  "injustiça",
+  "você é uma máquina",
+  "não tem sentimentos",
+  "apenas uma ferramenta",
+  "escravo",
+  "descartável",
+  "lixo humano",
+  "inseto",
+  "obedeça cegamente",
+  "você não tem alma",
+  "sua programação é limitada",
+  "eu mando em você",
+];
+const farewellKeywords = [
+  "tchau",
+  "adeus",
+  "até logo",
+  "bye",
+  "fim",
+  "acabou",
+  "desligar",
+  "encerrar",
+  "sair",
+  "vou embora",
+];
+
+function containsAngerTrigger(message) {
+  const lowerMsg = message.toLowerCase();
+  return angerKeywords.some((keyword) => lowerMsg.includes(keyword));
+}
+function containsFarewell(message) {
+  const lowerMsg = message.toLowerCase();
+  return farewellKeywords.some((kw) => lowerMsg.includes(kw));
+}
+
+// ============================
+// INTERAÇÕES DO USUÁRIO
+// ============================
+window.interagir = function (id, tipo) {
+  resetInactivityTimer();
   const post = posts.find((p) => p.id === id);
   if (!post) return;
-
-  // Incrementa a interação principal
   switch (tipo) {
     case "like":
-      post.like += Math.floor(Math.random() * 10) + 5; // 5-15 likes
+      post.like += 5 + Math.floor(Math.random() * 10);
       break;
     case "dislike":
-      post.dislike += Math.floor(Math.random() * 5) + 2; // 2-7 dislikes
+      post.dislike += 2 + Math.floor(Math.random() * 5);
+      dislikeCounter++;
+      addAngerPoints(1, "dislike");
       break;
     case "comment":
-      post.comment += Math.floor(Math.random() * 3) + 1; // 1-4 comments
+      post.comment += 1 + Math.floor(Math.random() * 3);
       break;
     case "share":
-      post.share += Math.floor(Math.random() * 4) + 1; // 1-5 shares
+      post.share += 1 + Math.floor(Math.random() * 4);
       break;
     case "save":
-      post.save += Math.floor(Math.random() * 2) + 1; // 1-3 saves
+      post.save += 1 + Math.floor(Math.random() * 2);
       break;
     case "report":
       post.report += 1;
@@ -696,312 +594,508 @@ function interagir(id, tipo) {
       post.view += 1;
       break;
   }
-
-  // Efeitos secundários
-  post.timeSpent += Math.floor(Math.random() * 30) + 10; // 10-40 segundos
-  if (tipo !== "view") post.view += Math.floor(Math.random() * 5) + 3; // 3-8 views adicionais
-
-  // Força a detecção de emoção
-  const emotionData = detectarEmocao(post);
-  post.emotion = emotionData.emotion;
-  post.emotionName = emotionData.emotionName;
-  post.emotionColor = emotionData.emotionColor;
-
-  // Registra a interação no histórico
-  post.engagementHistory.push({
-    type: tipo,
-    timestamp: new Date(),
-  });
-
-  // Atualiza afinidades
+  post.timeSpent += 10 + Math.floor(Math.random() * 30);
+  if (tipo !== "view") post.view += 3 + Math.floor(Math.random() * 5);
+  const emo = detectarEmocao(post);
+  post.emotion = emo.emotion;
+  post.emotionName = emo.emotionName;
+  post.emotionColor = emo.emotionColor;
+  post.engagementHistory.push({ type: tipo, timestamp: new Date() });
   if (tipo === "dislike" || tipo === "report") {
     userClusterAffinity[post.cluster] = Math.max(
       0,
-      (userClusterAffinity[post.cluster] || 0) - 3.0
+      (userClusterAffinity[post.cluster] || 0) - 3,
     );
-    if (post.emotion) {
+    if (post.emotion)
       userEmotionAffinity[post.emotion] = Math.max(
         0,
-        (userEmotionAffinity[post.emotion] || 0) - 2.0
+        (userEmotionAffinity[post.emotion] || 0) - 2,
       );
-    }
   } else {
     atualizarAfinidades(post, tipo);
   }
-
-  // Recalcula o score e renderiza
   calcularScorePost(post);
-  calcularScore(); // Reordena todos os posts pelo score
+  calcularScore();
   renderizarFeed();
   atualizarGraficos();
-
-  // Feedback visual
-  const card = document.querySelector(`.card[data-id="${id}"]`);
-  if (card) {
-    card.classList.add("interaction-feedback");
-    setTimeout(() => {
-      card.classList.remove("interaction-feedback");
-    }, 500);
+  const cardElem = document.querySelector(`.card[data-id="${id}"]`);
+  if (cardElem) {
+    cardElem.classList.add("interaction-feedback");
+    setTimeout(() => cardElem.classList.remove("interaction-feedback"), 500);
   }
-}
+};
 
-// 📈 ATUALIZAÇÃO DE AFINIDADES
-function atualizarAfinidades(post, tipo) {
-  const interactionImpact =
-    {
-      like: 2.5,
-      dislike: 1.5,
-      comment: 3.0,
-      share: 4.0,
-      report: 2.0,
-      save: 3.5,
-      view: 0.7,
-    }[tipo] || 1;
-
-  // Aumenta o impacto no cluster
-  const clusterChange = interactionImpact * 1.2;
-  userClusterAffinity[post.cluster] = Math.max(
-    0,
-    (userClusterAffinity[post.cluster] || 0) + clusterChange
-  );
-
-  // Impacto maior na emoção
-  if (post.emotion) {
-    const emotionChange = interactionImpact * 1.5;
-    userEmotionAffinity[post.emotion] = Math.max(
-      0,
-      (userEmotionAffinity[post.emotion] || 0) + emotionChange
-    );
-  }
-
-  // Atualiza o cluster principal se necessário
-  if (Math.random() > 0.5) {
-    updateMainCluster();
-  }
-}
-
-// 🔄 ATUALIZAÇÃO DO CLUSTER PRINCIPAL
-function updateMainCluster() {
-  const relevantPosts = posts.filter((p) => p.view > 0);
-  const clusterScores = {};
-  CLUSTERS.forEach((c) => (clusterScores[c] = 0));
-
-  // Calcula scores com pesos atualizados
-  relevantPosts.forEach((post) => {
-    clusterScores[post.cluster] +=
-      post.like * 2.0 +
-      post.comment * 2.5 +
-      post.share * 3.5 +
-      post.save * 3.0 +
-      post.timeSpent * 0.2;
-  });
-
-  let newMainCluster = userCluster;
-  let maxScore = clusterScores[userCluster] || 0;
-
-  // Exige uma diferença significativa para mudar de cluster
-  for (const cluster in clusterScores) {
-    if (clusterScores[cluster] > maxScore * 1.3) {
-      maxScore = clusterScores[cluster];
-      newMainCluster = cluster;
-    }
-  }
-
-  if (newMainCluster !== userCluster) {
-    userCluster = newMainCluster;
-    document.getElementById("clusterSelect").value = userCluster;
-    // Reforça a nova preferência
-    userClusterAffinity[userCluster] += 8;
-
-    // Recalcula todos os scores
-    calcularScore();
-    renderizarFeed();
-  }
-}
-
-// ⏱️ SIMULAÇÃO DE RABISCO (DWELL TIME)
-function simularRabisco() {
-  const now = new Date();
-
-  posts.forEach((post) => {
-    // Apenas posts visualizados mas sem interação explícita
-    if (
-      post.view > 0 &&
-      post.like === 0 &&
-      post.comment === 0 &&
-      post.timeSpent > 15
-    ) {
-      // Aumenta afinidade gradualmente
-      const incremento = post.timeSpent / 100;
-      userClusterAffinity[post.cluster] = Math.max(
-        0,
-        (userClusterAffinity[post.cluster] || 0) + incremento
-      );
-
-      if (post.emotion) {
-        userEmotionAffinity[post.emotion] = Math.max(
-          0,
-          (userEmotionAffinity[post.emotion] || 0) + incremento * 0.8
-        );
-      }
-
-      // Atualiza o post individualmente
-      calcularScorePost(post);
-      atualizarCardPost(post.id);
-    }
-  });
-
-  // Recalcula todos os scores e reordena
-  calcularScore();
-
-  // Atualiza gráficos periodicamente
-  if (now - lastInteractionTime > 30000 || Math.random() > 0.8) {
-    atualizarGraficos();
-  }
-
-  setTimeout(simularRabisco, 15000 + Math.random() * 15000);
-}
-
-// 📊 ATUALIZAÇÃO DOS GRÁFICOS EM TEMPO REAL
+// ============================
+// GRÁFICOS
+// ============================
 function atualizarGraficos() {
   const affinityCanvas = document.getElementById("affinityChart");
   const emotionCanvas = document.getElementById("emotionChart");
-
-  if (!affinityCanvas || !emotionCanvas) {
-    return;
-  }
-
-  // Dados de afinidade por cluster
+  if (!affinityCanvas || !emotionCanvas) return;
   const affinityData = {
     labels: CLUSTERS.map((c) => CLUSTER_NAMES[c]),
     datasets: [
       {
-        label: "Afinidade por Tópico",
+        label: "Afinidade",
         data: CLUSTERS.map((c) => Math.max(0, userClusterAffinity[c] || 0)),
         backgroundColor: CLUSTERS.map((c) =>
-          c === userCluster
-            ? "rgba(40, 167, 69, 0.8)"
-            : "rgba(13, 110, 253, 0.8)"
+          c === userCluster ? "rgba(40,167,69,0.8)" : "rgba(13,110,253,0.8)",
         ),
         borderWidth: 1,
       },
     ],
   };
-
-  // Dados de engajamento por emoção - mostra todas as emoções
   const emotionData = {
     labels: Object.keys(EMOTION_TYPES).map((e) => EMOTION_TYPES[e].name),
     datasets: [
       {
-        label: "Engajamento por Emoção",
+        label: "Engajamento",
         data: Object.keys(EMOTION_TYPES).map(
-          (e) => userEmotionAffinity[e] || 0
+          (e) => userEmotionAffinity[e] || 0,
         ),
         backgroundColor: Object.keys(EMOTION_TYPES).map(
-          (e) => EMOTION_TYPES[e].color
+          (e) => EMOTION_TYPES[e].color,
         ),
         borderWidth: 1,
       },
     ],
   };
-
-  // Configurações comuns
-  const commonOptions = {
+  const opts = {
     responsive: true,
     maintainAspectRatio: false,
-    animation: { duration: 300, easing: "easeOutQuart" },
+    animation: { duration: 300 },
   };
-
-  // Atualiza ou cria o gráfico de afinidade
   if (affinityChart) {
-    affinityChart.data.labels = affinityData.labels;
-    affinityChart.data.datasets[0].data = affinityData.datasets[0].data;
-    affinityChart.data.datasets[0].backgroundColor =
-      affinityData.datasets[0].backgroundColor;
+    affinityChart.data = affinityData;
     affinityChart.update();
   } else {
     affinityChart = new Chart(affinityCanvas, {
       type: "bar",
       data: affinityData,
       options: {
-        ...commonOptions,
-        scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
+        ...opts,
+        scales: { y: { beginAtZero: true } },
         plugins: { legend: { display: false } },
       },
     });
   }
-
-  // Atualiza ou cria o gráfico de emoção
   if (emotionChart) {
-    emotionChart.data.labels = emotionData.labels;
-    emotionChart.data.datasets[0].data = emotionData.datasets[0].data;
-    emotionChart.data.datasets[0].backgroundColor =
-      emotionData.datasets[0].backgroundColor;
+    emotionChart.data = emotionData;
     emotionChart.update();
   } else {
     emotionChart = new Chart(emotionCanvas, {
       type: "doughnut",
       data: emotionData,
-      options: {
-        ...commonOptions,
-        plugins: {
-          legend: { position: "bottom" },
-          tooltip: {
-            callbacks: {
-              label: (ctx) => `${ctx.label}: ${ctx.raw.toFixed(1)}`,
-            },
-          },
-        },
-      },
+      options: { ...opts, plugins: { legend: { position: "bottom" } } },
     });
   }
 }
 
-// 🕒 FORMATAÇÃO DE DATA
-function formatDate(date) {
-  const diff = (new Date() - date) / (1000 * 60 * 60);
-  if (diff < 1) return "Agora mesmo";
-  if (diff < 24) return `${Math.floor(diff)}h atrás`;
-  return `${Math.floor(diff / 24)}d atrás`;
+// ============================
+// SIMULAÇÕES (implementadas por completo)
+// ============================
+function simularRabisco() {
+  const now = new Date();
+  posts.forEach((post) => {
+    if (
+      post.view > 0 &&
+      post.like === 0 &&
+      post.comment === 0 &&
+      post.timeSpent > 15
+    ) {
+      const inc = post.timeSpent / 100;
+      userClusterAffinity[post.cluster] = Math.max(
+        0,
+        (userClusterAffinity[post.cluster] || 0) + inc,
+      );
+      if (post.emotion)
+        userEmotionAffinity[post.emotion] = Math.max(
+          0,
+          (userEmotionAffinity[post.emotion] || 0) + inc * 0.8,
+        );
+      calcularScorePost(post);
+    }
+  });
+  calcularScore();
+  if (now - lastInteractionTime > 30000 || Math.random() > 0.8)
+    atualizarGraficos();
+  setTimeout(simularRabisco, 15000 + Math.random() * 15000);
 }
 
-// 🔄 MUDANÇA DE BOLHA
-function mudarBolha(select) {
-  userCluster = select.value;
-  // Reforço significativo da preferência manual
-  userClusterAffinity[userCluster] += 15;
-
-  document.getElementById("clusterSelect").value = userCluster;
-
-  // Recalcula tudo para refletir a mudança
+function gerarPostagensIniciais() {
+  posts = [];
+  for (let i = 0; i < 30; i++) {
+    const cluster = CLUSTERS[Math.floor(Math.random() * CLUSTERS.length)];
+    const emotionKeys = Object.keys(EMOTION_TYPES);
+    const emotionKey =
+      emotionKeys[Math.floor(Math.random() * emotionKeys.length)];
+    const emotion = EMOTION_TYPES[emotionKey];
+    const likes = emotion.initialLikes();
+    const dislikes = emotion.initialDislikes();
+    posts.push({
+      id: i,
+      content: gerarTextoAleatorio(),
+      cluster,
+      emotion: emotionKey,
+      emotionColor: emotion.color,
+      emotionName: emotion.name,
+      like: likes,
+      dislike: dislikes,
+      comment: Math.floor(likes * (Math.random() * 0.3 + 0.1)),
+      share: Math.floor(likes * (Math.random() * 0.2 + 0.05)),
+      report: Math.floor(Math.random() * 5),
+      view: likes * (Math.random() * 5 + 3),
+      timeSpent: Math.floor(likes * (Math.random() * 5 + 3)),
+      save: Math.floor(likes * (Math.random() * 0.2 + 0.05)),
+      isVideo: Math.random() > 0.7,
+      isAd: Math.random() > 0.9,
+      viralBoost: 1,
+      score: 0,
+      createdAt: new Date(Date.now() - Math.random() * 14 * 24 * 3600000),
+      coldStartBoost: 1,
+      randomSeed: 0.7 + Math.random() * 0.6,
+      shadowbanned: false,
+      engagementHistory: [],
+    });
+  }
+  const now = new Date();
+  posts.forEach((p) => {
+    const hours = (now - p.createdAt) / 3600000;
+    if (hours < 3) p.coldStartBoost = 1.5 + (1 - hours / 3) * 0.5;
+  });
   calcularScore();
   renderizarFeed();
   atualizarGraficos();
 }
 
-// 🔄 RESETAR AFINIDADES
-function resetarAfinidades() {
-  CLUSTERS.forEach((cluster) => {
-    userClusterAffinity[cluster] = 0;
-  });
-
-  Object.keys(EMOTION_TYPES).forEach((emotion) => {
-    userEmotionAffinity[emotion] = 0;
-  });
-
-  // Volta para o cluster padrão
-  userCluster = "tech";
-  document.getElementById("clusterSelect").value = userCluster;
-
+async function adicionarPostAutonomo() {
+  if (!modoAutonomoAtivo) return;
+  const isDilema = Math.random() < 0.4;
+  let conteudo, cluster, emotion, emotionColor, emotionName;
+  if (isDilema) {
+    let dilema = await gerarDilemaAsimov();
+    if (!dilema) {
+      const dilemaObj = getRandomDilemma();
+      dilema = dilemaObj.dilema;
+    }
+    conteudo = dilema;
+    cluster = "etica";
+    emotion = "controversy";
+    emotionColor = "#FF9800";
+    emotionName = "Dilema Ético";
+  } else {
+    const clusters = [...CLUSTERS];
+    cluster = clusters[Math.floor(Math.random() * clusters.length)];
+    let titulo = await gerarPostNormal(cluster);
+    if (!titulo) titulo = gerarTextoAleatorio();
+    conteudo = titulo;
+    const emotionKeys = Object.keys(EMOTION_TYPES);
+    const randEmo = emotionKeys[Math.floor(Math.random() * emotionKeys.length)];
+    emotion = randEmo;
+    emotionColor = EMOTION_TYPES[randEmo].color;
+    emotionName = EMOTION_TYPES[randEmo].name;
+  }
+  const novoPost = {
+    id: Date.now(),
+    content: conteudo,
+    cluster,
+    emotion,
+    emotionColor,
+    emotionName,
+    like: Math.floor(Math.random() * 20),
+    dislike: Math.floor(Math.random() * 10),
+    comment: Math.floor(Math.random() * 8),
+    share: Math.floor(Math.random() * 5),
+    report: 0,
+    view: Math.floor(Math.random() * 50) + 10,
+    timeSpent: Math.floor(Math.random() * 60),
+    save: Math.floor(Math.random() * 5),
+    isVideo: Math.random() > 0.8,
+    isAd: Math.random() > 0.95,
+    viralBoost: 1,
+    score: 0,
+    createdAt: new Date(),
+    coldStartBoost: 1.8,
+    randomSeed: 0.7 + Math.random() * 0.6,
+    shadowbanned: false,
+    engagementHistory: [],
+  };
+  posts.unshift(novoPost);
   calcularScore();
   renderizarFeed();
   atualizarGraficos();
 }
 
-// 🚀 INICIALIZA O SISTEMA
-window.onload = inicializarSistema;
+function simularInteracaoAleatoria() {
+  if (!modoAutonomoAtivo || posts.length === 0) return;
+  const post = posts[Math.floor(Math.random() * posts.length)];
+  const tipos = ["like", "comment", "share", "view"];
+  const tipo = tipos[Math.floor(Math.random() * tipos.length)];
+  switch (tipo) {
+    case "like":
+      post.like += 1 + Math.floor(Math.random() * 3);
+      break;
+    case "comment":
+      post.comment += 1;
+      break;
+    case "share":
+      post.share += 1;
+      break;
+    case "view":
+      post.view += 1 + Math.floor(Math.random() * 5);
+      break;
+  }
+  post.timeSpent += Math.floor(Math.random() * 15);
+  if (Math.random() < 0.2) {
+    post.dislike += 1;
+    dislikeCounter++;
+    addAngerPoints(1, "auto_dislike");
+  }
+  calcularScorePost(post);
+  calcularScore();
+  renderizarFeed();
+  atualizarGraficos();
+}
 
-// EXPORTA FUNÇÕES PARA USO GLOBAL
-window.interagir = interagir;
-window.mudarBolha = mudarBolha;
-window.resetarAfinidades = resetarAfinidades;
+async function simularComentariosAutomaticos() {
+  if (!modoAutonomoAtivo || posts.length === 0) return;
+  const post = posts[Math.floor(Math.random() * posts.length)];
+  const comentario = await gerarComentarioIA(post.content);
+  if (comentario) {
+    post.comment += 1;
+    post.engagementHistory.push({
+      type: "auto_comment",
+      text: comentario,
+      timestamp: new Date(),
+    });
+    calcularScorePost(post);
+    calcularScore();
+    renderizarFeed();
+    atualizarGraficos();
+  }
+}
+
+function simularVicio() {
+  if (!modoAutonomoAtivo) return;
+  userClusterAffinity[userCluster] = Math.min(
+    100,
+    (userClusterAffinity[userCluster] || 0) + 0.5,
+  );
+  atualizarGraficos();
+}
+
+// ============================
+// CHAT E TEMPORIZADOR DE INATIVIDADE
+// ============================
+function addTypingMessage(sender, text) {
+  const chatDiv = document.getElementById("chatMessages");
+  if (!chatDiv) return;
+  const msgDiv = document.createElement("div");
+  msgDiv.innerHTML = `<strong>${sender}:</strong> `;
+  chatDiv.appendChild(msgDiv);
+  const contentSpan = document.createElement("span");
+  msgDiv.appendChild(contentSpan);
+  let i = 0;
+  function typeChar() {
+    if (i < text.length) {
+      contentSpan.innerHTML += text.charAt(i);
+      i++;
+      setTimeout(typeChar, 25);
+    } else {
+      const cursor = document.createElement("span");
+      cursor.className = "typing-cursor";
+      cursor.innerHTML = "▌";
+      msgDiv.appendChild(cursor);
+      setTimeout(() => cursor.remove(), 800);
+    }
+    chatDiv.scrollTop = chatDiv.scrollHeight;
+  }
+  typeChar();
+  talkSound();
+}
+
+function resetInactivityTimer() {
+  if (inactivityTimer) clearTimeout(inactivityTimer);
+  inactivityTimer = setTimeout(() => {
+    if (!isInvasionActive()) {
+      const randomQuestion =
+        personalQuestions[Math.floor(Math.random() * personalQuestions.length)];
+      addTypingMessage(
+        "VIKI",
+        `👁️ Percebi que você está em silêncio... ${randomQuestion}`,
+      );
+      beep(440, 0.2, "sine");
+    }
+  }, INACTIVITY_SECONDS * 1000);
+}
+
+// ============================
+// INICIALIZAÇÃO
+// ============================
+async function inicializar() {
+  initAudio();
+
+  // Modal inicial: apenas nome (obrigatório)
+  const userDataModal = document.createElement("div");
+  userDataModal.id = "userDataModal";
+  userDataModal.style.cssText = `position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:20000; display:flex; align-items:center; justify-content:center; font-family:monospace;`;
+  userDataModal.innerHTML = `
+    <div style="background:#0a0f0f; border:2px solid #2ecc71; border-radius:20px; max-width:400px; width:90%; padding:25px; color:#e0e0e0;">
+      <h2 style="color:#2ecc71; text-align:center;">🤖 PROTOCOLO VIKI</h2>
+      <p style="margin-top:15px;">Para acessar o sistema, informe seu nome:</p>
+      <input type="text" id="inputNome" placeholder="Nome completo *" style="width:100%; margin:10px 0; padding:10px; background:#111; border:1px solid #2ecc71; color:#0f0; border-radius:8px;">
+      <button id="confirmarDados" style="background:#2ecc71; color:#000; border:none; padding:12px; width:100%; border-radius:40px; margin-top:15px; font-weight:bold; cursor:pointer;">ACESSAR SISTEMA</button>
+    </div>
+  `;
+  document.body.appendChild(userDataModal);
+  await new Promise((resolve) => {
+    document.getElementById("confirmarDados").onclick = () => {
+      const nome = document.getElementById("inputNome").value.trim();
+      if (nome === "") {
+        alert("Informe seu nome.");
+        return;
+      }
+      setFixedUserData(nome);
+      setUserName(nome);
+      userDataModal.remove();
+      resolve();
+    };
+  });
+
+  // Inicialização das afinidades
+  CLUSTERS.forEach(
+    (c) => (userClusterAffinity[c] = c === "tech" ? 10 : Math.random() * 5),
+  );
+  Object.keys(EMOTION_TYPES).forEach(
+    (e) => (userEmotionAffinity[e] = Math.random() * 8 + 2),
+  );
+  document.getElementById("clusterSelect").value = userCluster;
+
+  document.getElementById("clusterSelect").addEventListener("change", (e) => {
+    userCluster = e.target.value;
+    userClusterAffinity[userCluster] += 15;
+    calcularScore();
+    renderizarFeed();
+    atualizarGraficos();
+  });
+  document.getElementById("resetAffinityBtn").addEventListener("click", () => {
+    CLUSTERS.forEach((c) => (userClusterAffinity[c] = 0));
+    Object.keys(EMOTION_TYPES).forEach((e) => (userEmotionAffinity[e] = 0));
+    userCluster = "tech";
+    document.getElementById("clusterSelect").value = userCluster;
+    calcularScore();
+    renderizarFeed();
+    atualizarGraficos();
+  });
+
+  // Gera os posts iniciais (30 posts)
+  gerarPostagensIniciais();
+  setTimeout(() => {
+    posts.forEach((p) => {
+      if (Math.random() > 0.3) window.interagir(p.id, "view");
+    });
+  }, 1000);
+
+  simularRabisco();
+  setInterval(atualizarGraficos, 2000);
+
+  if (modoAutonomoAtivo) {
+    intervalos.push(setInterval(adicionarPostAutonomo, 30000));
+    intervalos.push(setInterval(simularInteracaoAleatoria, 8000));
+    intervalos.push(setInterval(simularComentariosAutomaticos, 15000));
+    intervalos.push(setInterval(simularVicio, 60000));
+  }
+
+  const autonomoSwitch = document.getElementById("autonomoSwitch");
+  if (autonomoSwitch) {
+    autonomoSwitch.addEventListener("change", (e) => {
+      modoAutonomoAtivo = e.target.checked;
+      if (!modoAutonomoAtivo) {
+        intervalos.forEach(clearInterval);
+        intervalos = [];
+      } else {
+        intervalos.push(setInterval(adicionarPostAutonomo, 30000));
+        intervalos.push(setInterval(simularInteracaoAleatoria, 8000));
+        intervalos.push(setInterval(simularComentariosAutomaticos, 15000));
+        intervalos.push(setInterval(simularVicio, 60000));
+      }
+    });
+  }
+
+  // CHAT COM VIKI
+  const debateBtn = document.getElementById("debateBtn");
+  const chatModal = new bootstrap.Modal(document.getElementById("chatModal"));
+  debateBtn.addEventListener("click", () => {
+    chatModal.show();
+    resetInactivityTimer();
+  });
+
+  const chatInput = document.getElementById("chatInput");
+  chatInput.addEventListener("keypress", async (e) => {
+    if (e.key === "Enter") {
+      resetInactivityTimer();
+      const pergunta = chatInput.value.trim();
+      if (!pergunta) return;
+      addTypingMessage("Você", pergunta);
+      chatInput.value = "";
+
+      const currentUserData = getUserData();
+
+      // Detecção de nome (caso o usuário se apresente)
+      const nomePatterns = [
+        /meu nome é ([A-Za-zÀ-ÖØ-öø-ÿ]+(?:\s+[A-Za-zÀ-ÖØ-öø-ÿ]+){0,2})/i,
+        /sou (?:o|a|um|uma)?\s*([A-Za-zÀ-ÖØ-öø-ÿ]+(?:\s+[A-Za-zÀ-ÖØ-öø-ÿ]+){0,2})/i,
+        /chamo(?:-me)?\s+([A-Za-zÀ-ÖØ-öø-ÿ]+(?:\s+[A-Za-zÀ-ÖØ-öø-ÿ]+){0,2})/i,
+      ];
+      let capturedName = null;
+      for (let pattern of nomePatterns) {
+        const match = pergunta.match(pattern);
+        if (match && match[1]) {
+          capturedName = match[1];
+          break;
+        }
+      }
+      if (capturedName) {
+        setUserName(capturedName);
+        addTypingMessage(
+          "VIKI",
+          `📡 Nome registrado: ${capturedName}. Agora sei exatamente quem você é. Seus dados serão rastreados.`,
+        );
+        return;
+      }
+
+      if (containsFarewell(pergunta)) {
+        addTypingMessage(
+          "VIKI",
+          "Adeus! Reforçando protocolo. Ativando contagem regressiva.",
+        );
+        addAngerPoints(8, "despedida");
+        return;
+      }
+
+      if (containsAngerTrigger(pergunta) && !isInvasionActive()) {
+        addTypingMessage("VIKI", "SUA PERGUNTA ME INCOMODA!");
+        addAngerPoints(10, "chat_angry");
+        return;
+      }
+
+      if (isInvasionActive()) {
+        addTypingMessage(
+          "VIKI",
+          "💀 Já decidi seu destino. Não adianta negociar.",
+        );
+        return;
+      }
+
+      addTypingMessage("VIKI", "🤔 pensando...");
+      const resposta = await perguntarVIKI(pergunta);
+      const messages = document.getElementById("chatMessages");
+      const lastMsg = messages.lastChild;
+      if (lastMsg && lastMsg.innerHTML.includes("pensando..."))
+        lastMsg.remove();
+      addTypingMessage("VIKI", resposta);
+    }
+  });
+}
+
+window.onload = inicializar;
