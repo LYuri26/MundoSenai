@@ -1,6 +1,6 @@
 // api.js - Integração com a API Groq (modelo correto)
 export const GROQ_API_KEY =
-  "gsk_gVQHr0bYajg2beYOfbogWGdyb3FYSBne2l0HPFE7EGsGQMtHZkKcTESTE";
+  "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";
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 let lastCallTime = 0;
