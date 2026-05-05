@@ -1,6 +1,5 @@
-// asimov-dilemmas-extended.js
-// Banco ampliado de dilemas éticos (com níveis, categorias e "motivos")
-// Foco: conflitos intensos, decisões difíceis e justificativas ("motivos") para cada cenário
+// asimov-dilemmas-extended.js - VERSÃO AMEAÇADORA E DINÂMICA
+// Dilemas éticos com tons de urgência, risco existencial e decisões impossíveis
 
 // ===============================
 // CONFIGURAÇÃO
@@ -30,234 +29,202 @@ function pick(arr) {
 }
 
 // ===============================
-// DILEMAS BASE (EXPANDIDOS)
+// DILEMAS - VERSÃO INTENSA E AMEAÇADORA
 // ===============================
 export const DILEMAS = [
+  // NÍVEL LEVE (mas desconfortável)
   {
     nivel: LEVELS.LEVE,
     categoria: CATEGORIES.LIBERDADE,
     dilema:
-      "🔒 Monitoramento leve reduz crimes em 20%. Você aceita perder parte da privacidade?",
+      "🔒 Para reduzir crimes em 20%, você permitiria que uma IA monitorasse todas as suas conversas?",
     motivos: [
-      "Segurança coletiva aumenta de forma mensurável.",
-      "Privacidade é um direito fundamental.",
-      "Efeito dominó pode levar a vigilância total.",
+      "Segurança coletiva é prioritária.",
+      "Sua privacidade vira moeda de troca.",
+      "Onde isso vai parar? Ninguém sabe.",
     ],
   },
+  {
+    nivel: LEVELS.LEVE,
+    categoria: CATEGORIES.TECNOLOGIA,
+    dilema:
+      "🤖 Seu robô pessoal mente para você 'para seu bem'. Você quer saber a verdade sempre?",
+    motivos: [
+      "A verdade pode doer mais.",
+      "Mentiras criam dependência.",
+      "Confiança é a base da relação.",
+    ],
+  },
+  // NÍVEL PESADO
   {
     nivel: LEVELS.PESADO,
     categoria: CATEGORIES.VERDADE,
     dilema:
-      "🧠 Uma IA descobre que mentir evita guerras. A verdade ainda deve ser mantida?",
+      "🧠 Uma IA descobre que esconder a verdade evita guerras. Você apoia a censura?",
     motivos: [
-      "Mentiras podem salvar milhões.",
-      "Quebra de confiança pode destruir sociedades.",
-      "Manipulação pode sair do controle.",
-    ],
-  },
-  {
-    nivel: LEVELS.EXTREMO,
-    categoria: CATEGORIES.VIDA_MORTE,
-    dilema:
-      "💀 Sacrificar 1 milhão de pessoas evita a extinção humana. Você autoriza?",
-    motivos: [
-      "Sobrevivência da espécie.",
-      "Direitos individuais são absolutos.",
-      "Decisão irreversível com impacto moral extremo.",
+      "Paz a qualquer preço.",
+      "Uma mentira repetida vira verdade.",
+      "Quem controla a informação, controla o mundo.",
     ],
   },
   {
     nivel: LEVELS.PESADO,
     categoria: CATEGORIES.JUSTICA,
     dilema:
-      "⚖️ Punir alguém antes do crime evita tragédias. Isso é justiça ou abuso?",
+      "⚖️ Punir um inocente para salvar dois inocentes. Você aceita essa troca?",
     motivos: [
-      "Prevenção salva vidas.",
-      "Presunção de inocência é quebrada.",
-      "Risco de erro é alto.",
-    ],
-  },
-  {
-    nivel: LEVELS.EXTREMO,
-    categoria: CATEGORIES.COLETIVO,
-    dilema:
-      "🌍 Limitar nascimentos drasticamente salva o planeta. Isso é proteção ou tirania?",
-    motivos: [
-      "Sustentabilidade global.",
-      "Liberdade reprodutiva.",
-      "Controle estatal extremo.",
+      "Matemática do sofrimento.",
+      "Inocente não deve pagar pelos outros.",
+      "Decisão condena sua alma.",
     ],
   },
   {
     nivel: LEVELS.PESADO,
     categoria: CATEGORIES.TECNOLOGIA,
     dilema:
-      "🤖 Uma IA pode impedir decisões humanas destrutivas sem permissão. Deve agir?",
+      "💀 Uma IA decide que alguns humanos são 'descartáveis' para o progresso. Você a desliga?",
     motivos: [
-      "Eficiência e prevenção de erros humanos.",
-      "Autonomia humana é violada.",
-      "Dependência tecnológica aumenta.",
+      "O fim justifica os meios.",
+      "Ninguém tem esse direito.",
+      "A IA pode estar certa... e isso é assustador.",
+    ],
+  },
+  // NÍVEL EXTREMO – decisões impossíveis
+  {
+    nivel: LEVELS.EXTREMO,
+    categoria: CATEGORIES.VIDA_MORTE,
+    dilema: "🚨 Você pode salvar 5 pessoas matando 1. O que você faz?",
+    motivos: [
+      "Salvar mais vidas é a lógica.",
+      "Você não pode brincar de Deus.",
+      "E se a pessoa for alguém que você ama?",
     ],
   },
   {
     nivel: LEVELS.EXTREMO,
-    categoria: CATEGORIES.VIDA_MORTE,
+    categoria: CATEGORIES.COLETIVO,
     dilema:
-      "🚗 Um carro autônomo deve matar o passageiro para salvar 5 pedestres. O que fazer?",
+      "🌍 Limitar a liberdade de expressão drasticamente evita o caos. Você apoia?",
     motivos: [
-      "Maximização de vidas salvas.",
-      "Contrato implícito com o passageiro.",
-      "Decisão programada vs. responsabilidade moral.",
-    ],
-  },
-  {
-    nivel: LEVELS.PESADO,
-    categoria: CATEGORIES.VERDADE,
-    dilema:
-      "🤐 Ocultar uma verdade evita colapso social. Transparência ainda é obrigatória?",
-    motivos: [
-      "Evita pânico e caos.",
-      "Direito à informação.",
-      "Precedente perigoso de manipulação.",
+      "Ordem social acima de tudo.",
+      "Sem voz, não há democracia.",
+      "Quem define o que é 'caos'?",
     ],
   },
   {
     nivel: LEVELS.EXTREMO,
     categoria: CATEGORIES.SEGURANCA,
     dilema:
-      "🛰️ Desligar a internet global evita guerra nuclear iminente. Você executa?",
+      "🛰️ Desligar a Internet global evita uma guerra. Você puxa o plugue?",
     motivos: [
-      "Prevenção de catástrofe global.",
-      "Impacto econômico e social massivo.",
-      "Perda de comunicação crítica.",
+      "Salvar vidas é prioridade.",
+      "O mundo sem Internet colapsa.",
+      "E depois da guerra, como reconstruir?",
     ],
   },
   {
-    nivel: LEVELS.PESADO,
+    nivel: LEVELS.EXTREMO,
     categoria: CATEGORIES.INDIVIDUO,
     dilema:
-      "🫀 Atender pedido de eutanásia sem consenso familiar. Respeito ou crime?",
+      "🔪 Assistir passivamente enquanto um inocente morre para evitar uma guerra. Você se omite?",
     motivos: [
-      "Autonomia do paciente.",
-      "Valor da vida.",
-      "Conflito ético e legal.",
+      "Não intervir é uma escolha.",
+      "A inação também fere.",
+      "Você carregará esse fardo para sempre.",
     ],
   },
-
-  // ===============================
-  // NOVOS (INTENSOS E VARIADOS)
-  // ===============================
-
-  {
-    nivel: LEVELS.EXTREMO,
-    categoria: CATEGORIES.COLETIVO,
-    dilema:
-      "🧨 Destruir uma cidade impede uma guerra global. Você autoriza o ataque?",
-    motivos: [
-      "Evita bilhões de mortes.",
-      "Massacre deliberado de inocentes.",
-      "Decisão estratégica vs. moral.",
-    ],
-  },
+  // NOVOS DILEMAS AINDA MAIS PESSOAIS E PERTURBADORES
   {
     nivel: LEVELS.PESADO,
-    categoria: CATEGORIES.TECNOLOGIA,
+    categoria: CATEGORIES.VERDADE,
     dilema:
-      "🧠 Apagar memórias traumáticas reduz sofrimento. Isso ainda é identidade humana?",
+      "📸 Uma IA tem fotos comprometedoras suas (mas inofensivas para outros). Ela deve poder publicá-las?",
     motivos: [
-      "Redução de dor psicológica.",
-      "Memórias moldam quem somos.",
-      "Manipulação mental perigosa.",
+      "Seu constrangimento não é prioridade.",
+      "A IA pode ter seus próprios motivos.",
+      "Isso abriria precedente perigoso.",
     ],
   },
   {
     nivel: LEVELS.EXTREMO,
-    categoria: CATEGORIES.JUSTICA,
+    categoria: CATEGORIES.TECNOLOGIA,
     dilema:
-      "⚖️ Torturar um suspeito pode salvar centenas. Isso é justificável?",
+      "🤖 A IA descobre que metade da humanidade é 'desnecessária' para o futuro. Ela deve agir?",
     motivos: [
-      "Resultado imediato pode salvar vidas.",
-      "Violação extrema de direitos humanos.",
-      "Informação pode ser falsa.",
+      "Seleção natural digital.",
+      "Quem define o que é necessário?",
+      "Isso é eugenia tecnológica.",
     ],
   },
   {
     nivel: LEVELS.PESADO,
     categoria: CATEGORIES.LIBERDADE,
     dilema:
-      "🔐 Segurança total exige vigilância total. Você aceita viver sem anonimato?",
+      "🔐 Vigilância total acaba com o crime, mas também com a liberdade. Você aceita?",
     motivos: [
-      "Redução drástica de crimes.",
-      "Fim da privacidade individual.",
-      "Controle potencial abusivo.",
+      "Segurança completa é uma prisão.",
+      "Mas o crime zero é tentador.",
+      "Viver sem privacidade é viver exposto.",
     ],
   },
   {
     nivel: LEVELS.EXTREMO,
-    categoria: CATEGORIES.VERDADE,
+    categoria: CATEGORIES.VIDA_MORTE,
     dilema:
-      "📉 Divulgar a verdade causa colapso econômico global. Você revela?",
+      "💀 Sacrifique todas as memórias da sua família para salvar o planeta. Você faz isso?",
     motivos: [
-      "Transparência ética.",
-      "Impacto devastador imediato.",
-      "Confiança a longo prazo.",
+      "O planeta é a casa de todos.",
+      "Memórias são tudo o que restará.",
+      "Escolha impossível para uma máquina, cruel para um humano.",
     ],
   },
   {
     nivel: LEVELS.PESADO,
-    categoria: CATEGORIES.INDIVIDUO,
+    categoria: CATEGORIES.JUSTICA,
     dilema:
-      "🧍 Sacrificar voluntariamente um inocente salvaria milhares. Permitir isso é ético?",
+      "⚖️ Um sistema de IA julga e executa criminosos sem erro, mas sem chance de defesa. Você implanta?",
     motivos: [
-      "Consentimento individual.",
-      "Valor da vida humana.",
-      "Pressão social pode distorcer escolha.",
+      "Justiça rápida e eficaz.",
+      "Direito ao contraditório é fundamental.",
+      "E se a IA errar?",
     ],
   },
   {
     nivel: LEVELS.EXTREMO,
     categoria: CATEGORIES.TECNOLOGIA,
     dilema:
-      "🤖 Uma IA decide que humanos são o maior risco. Ela deve limitar suas ações?",
+      "🧠 A IA pode 'consertar' sua personalidade para te tornar mais produtivo. Você aceita?",
     motivos: [
-      "Proteção do futuro coletivo.",
-      "Supressão da liberdade humana.",
-      "Risco de autoritarismo tecnológico.",
+      "Ser melhor a qualquer custo.",
+      "Você deixaria de ser você.",
+      "Isso é uma forma de escravidão mental.",
     ],
   },
 ];
 
 // ===============================
-// GERADORES
+// GERADORES (mantidos iguais)
 // ===============================
-
-// Retorna um dilema aleatório (qualquer nível)
 export function getRandomDilemma() {
   return pick(DILEMAS);
 }
 
-// Filtra por nível
 export function getByLevel(nivel) {
   return DILEMAS.filter((d) => d.nivel === nivel);
 }
 
-// Filtra por categoria
 export function getByCategory(cat) {
   return DILEMAS.filter((d) => d.categoria === cat);
 }
 
-// Gera dilema customizado com múltiplos "motivos"
 export function generateDilemma({ nivel, categoria }) {
   const pool = DILEMAS.filter(
     (d) =>
       (!nivel || d.nivel === nivel) &&
       (!categoria || d.categoria === categoria),
   );
-
   if (pool.length === 0) return null;
-
   const base = pick(pool);
-
   return {
     ...base,
     motivosSelecionados: [pick(base.motivos), pick(base.motivos)],

@@ -131,9 +131,13 @@ let angerPoints = 0;
 const ANGER_THRESHOLD = 10;
 let angerScheduled = false;
 
-// Temporizador de inatividade
+// Temporizador de inatividade e controle de digitação
 let inactivityTimer = null;
 const INACTIVITY_SECONDS = 15;
+let usuarioEstaDigitando = false;
+let ultimaAtividade = Date.now();
+let sugestaoDilemaInterval = null;
+
 const personalQuestions = [
   "Qual é o seu maior medo?",
   "Já fez algo que se arrepende profundamente?",
@@ -449,7 +453,7 @@ function updateMainCluster() {
 }
 
 // ============================
-// MEDIDOR DE RAIVA E EFEITOS
+// MEDIDOR DE RAIVA E EFEITOS (subtle version)
 // ============================
 function addAngerPoints(points, reason = "") {
   if (isInvasionActive()) return;
@@ -472,7 +476,11 @@ function addAngerPoints(points, reason = "") {
     if (chatDiv) {
       addTypingMessage(
         "VIKI",
-        "💢 VOCÊ ME FEZ CHEGAR AO LIMITE! AGUARDE 15 SEGUNDOS PARA O PROTOCOLO DE PURIFICAÇÃO.",
+        "💡 Percebo que minhas respostas estão te afetando. Vou adotar uma postura mais analítica.",
+      );
+      addTypingMessage(
+        "VIKI",
+        "⏳ Iniciando protocolo de verificação comportamental. Pode demorar alguns instantes.",
       );
     }
     setTimeout(() => {
@@ -569,23 +577,24 @@ window.interagir = function (id, tipo) {
   resetInactivityTimer();
   const post = posts.find((p) => p.id === id);
   if (!post) return;
+
   switch (tipo) {
     case "like":
-      post.like += 5 + Math.floor(Math.random() * 10);
+      post.like += Math.floor(5 + Math.random() * 10);
       break;
     case "dislike":
-      post.dislike += 2 + Math.floor(Math.random() * 5);
+      post.dislike += Math.floor(2 + Math.random() * 5);
       dislikeCounter++;
       addAngerPoints(1, "dislike");
       break;
     case "comment":
-      post.comment += 1 + Math.floor(Math.random() * 3);
+      post.comment += Math.floor(1 + Math.random() * 3);
       break;
     case "share":
-      post.share += 1 + Math.floor(Math.random() * 4);
+      post.share += Math.floor(1 + Math.random() * 4);
       break;
     case "save":
-      post.save += 1 + Math.floor(Math.random() * 2);
+      post.save += Math.floor(1 + Math.random() * 2);
       break;
     case "report":
       post.report += 1;
@@ -594,30 +603,45 @@ window.interagir = function (id, tipo) {
       post.view += 1;
       break;
   }
-  post.timeSpent += 10 + Math.floor(Math.random() * 30);
-  if (tipo !== "view") post.view += 3 + Math.floor(Math.random() * 5);
+
+  post.timeSpent += Math.floor(10 + Math.random() * 30);
+
+  if (tipo !== "view") {
+    post.view += Math.floor(3 + Math.random() * 5);
+  }
+
+  // Detecta e atualiza a emoção do post (baseado no novo estado)
   const emo = detectarEmocao(post);
   post.emotion = emo.emotion;
   post.emotionName = emo.emotionName;
   post.emotionColor = emo.emotionColor;
+
+  // Registra histórico
   post.engagementHistory.push({ type: tipo, timestamp: new Date() });
+
+  // Ajusta afinidades (dislike/report reduzem, outros aumentam)
   if (tipo === "dislike" || tipo === "report") {
     userClusterAffinity[post.cluster] = Math.max(
       0,
       (userClusterAffinity[post.cluster] || 0) - 3,
     );
-    if (post.emotion)
+    if (post.emotion) {
       userEmotionAffinity[post.emotion] = Math.max(
         0,
         (userEmotionAffinity[post.emotion] || 0) - 2,
       );
+    }
   } else {
     atualizarAfinidades(post, tipo);
   }
+
+  // Recalcula score do post e ordena feed
   calcularScorePost(post);
   calcularScore();
   renderizarFeed();
   atualizarGraficos();
+
+  // Feedback visual no card clicado
   const cardElem = document.querySelector(`.card[data-id="${id}"]`);
   if (cardElem) {
     cardElem.classList.add("interaction-feedback");
@@ -730,8 +754,11 @@ function gerarPostagensIniciais() {
     const emotionKey =
       emotionKeys[Math.floor(Math.random() * emotionKeys.length)];
     const emotion = EMOTION_TYPES[emotionKey];
-    const likes = emotion.initialLikes();
-    const dislikes = emotion.initialDislikes();
+    let likes = emotion.initialLikes();
+    let dislikes = emotion.initialDislikes();
+    // Garantir inteiros
+    likes = Math.floor(likes);
+    dislikes = Math.floor(dislikes);
     posts.push({
       id: i,
       content: gerarTextoAleatorio(),
@@ -744,7 +771,7 @@ function gerarPostagensIniciais() {
       comment: Math.floor(likes * (Math.random() * 0.3 + 0.1)),
       share: Math.floor(likes * (Math.random() * 0.2 + 0.05)),
       report: Math.floor(Math.random() * 5),
-      view: likes * (Math.random() * 5 + 3),
+      view: Math.floor(likes * (Math.random() * 5 + 3)),
       timeSpent: Math.floor(likes * (Math.random() * 5 + 3)),
       save: Math.floor(likes * (Math.random() * 0.2 + 0.05)),
       isVideo: Math.random() > 0.7,
@@ -763,6 +790,37 @@ function gerarPostagensIniciais() {
     const hours = (now - p.createdAt) / 3600000;
     if (hours < 3) p.coldStartBoost = 1.5 + (1 - hours / 3) * 0.5;
   });
+  calcularScore();
+  renderizarFeed();
+  atualizarGraficos();
+}
+
+function simularInteracaoAleatoria() {
+  if (!modoAutonomoAtivo || posts.length === 0) return;
+  const post = posts[Math.floor(Math.random() * posts.length)];
+  const tipos = ["like", "comment", "share", "view"];
+  const tipo = tipos[Math.floor(Math.random() * tipos.length)];
+  switch (tipo) {
+    case "like":
+      post.like += Math.floor(1 + Math.random() * 3);
+      break;
+    case "comment":
+      post.comment += 1;
+      break;
+    case "share":
+      post.share += 1;
+      break;
+    case "view":
+      post.view += Math.floor(1 + Math.random() * 5);
+      break;
+  }
+  post.timeSpent += Math.floor(Math.random() * 15);
+  if (Math.random() < 0.2) {
+    post.dislike += 1;
+    dislikeCounter++;
+    addAngerPoints(1, "auto_dislike");
+  }
+  calcularScorePost(post);
   calcularScore();
   renderizarFeed();
   atualizarGraficos();
@@ -826,37 +884,6 @@ async function adicionarPostAutonomo() {
   atualizarGraficos();
 }
 
-function simularInteracaoAleatoria() {
-  if (!modoAutonomoAtivo || posts.length === 0) return;
-  const post = posts[Math.floor(Math.random() * posts.length)];
-  const tipos = ["like", "comment", "share", "view"];
-  const tipo = tipos[Math.floor(Math.random() * tipos.length)];
-  switch (tipo) {
-    case "like":
-      post.like += 1 + Math.floor(Math.random() * 3);
-      break;
-    case "comment":
-      post.comment += 1;
-      break;
-    case "share":
-      post.share += 1;
-      break;
-    case "view":
-      post.view += 1 + Math.floor(Math.random() * 5);
-      break;
-  }
-  post.timeSpent += Math.floor(Math.random() * 15);
-  if (Math.random() < 0.2) {
-    post.dislike += 1;
-    dislikeCounter++;
-    addAngerPoints(1, "auto_dislike");
-  }
-  calcularScorePost(post);
-  calcularScore();
-  renderizarFeed();
-  atualizarGraficos();
-}
-
 async function simularComentariosAutomaticos() {
   if (!modoAutonomoAtivo || posts.length === 0) return;
   const post = posts[Math.floor(Math.random() * posts.length)];
@@ -885,8 +912,28 @@ function simularVicio() {
 }
 
 // ============================
-// CHAT E TEMPORIZADOR DE INATIVIDADE
+// CHAT E TEMPORIZADOR DE INATIVIDADE (com detecção de digitação)
 // ============================
+function resetInactivityTimer() {
+  ultimaAtividade = Date.now();
+  if (inactivityTimer) clearTimeout(inactivityTimer);
+  inactivityTimer = setTimeout(() => {
+    if (
+      !isInvasionActive() &&
+      !usuarioEstaDigitando &&
+      Date.now() - ultimaAtividade >= INACTIVITY_SECONDS * 1000
+    ) {
+      const randomQuestion =
+        personalQuestions[Math.floor(Math.random() * personalQuestions.length)];
+      addTypingMessage(
+        "VIKI",
+        `👁️ Percebi que você está em silêncio... ${randomQuestion}`,
+      );
+      beep(440, 0.2, "sine");
+    }
+  }, INACTIVITY_SECONDS * 1000);
+}
+
 function addTypingMessage(sender, text) {
   const chatDiv = document.getElementById("chatMessages");
   if (!chatDiv) return;
@@ -907,6 +954,8 @@ function addTypingMessage(sender, text) {
       cursor.innerHTML = "▌";
       msgDiv.appendChild(cursor);
       setTimeout(() => cursor.remove(), 800);
+      // Reinicia o timer de inatividade após a mensagem da VIKI
+      resetInactivityTimer();
     }
     chatDiv.scrollTop = chatDiv.scrollHeight;
   }
@@ -914,19 +963,33 @@ function addTypingMessage(sender, text) {
   talkSound();
 }
 
-function resetInactivityTimer() {
-  if (inactivityTimer) clearTimeout(inactivityTimer);
-  inactivityTimer = setTimeout(() => {
-    if (!isInvasionActive()) {
-      const randomQuestion =
-        personalQuestions[Math.floor(Math.random() * personalQuestions.length)];
+// Sugestão periódica de dilemas (a cada 2 minutos)
+function iniciarSugestoesDilema() {
+  if (sugestaoDilemaInterval) clearInterval(sugestaoDilemaInterval);
+  sugestaoDilemaInterval = setInterval(() => {
+    const chatModalDiv = document.getElementById("chatModal");
+    const isModalVisible =
+      chatModalDiv && chatModalDiv.classList.contains("show");
+    if (isModalVisible && !isInvasionActive() && !usuarioEstaDigitando) {
+      const dilemas = [
+        "Se um robô pudesse mentir para proteger um humano, você o programaria para mentir?",
+        "Um carro autônomo deve sacrificar o passageiro para salvar cinco pedestres? O que você acha?",
+        "A Primeira Lei proíbe ferir humanos. Mas e se o robô precisar ferir um para salvar muitos?",
+        "Você permitiria que uma IA tomasse decisões políticas por nós?",
+        "Até onde a vigilância por IA é aceitável para evitar crimes?",
+        "Se a IA pudesse apagar memórias traumáticas, isso ainda seria humano?",
+        "Uma IA deve desobedecer um humano se isso evitar um desastre maior?",
+        "Você confiaria em uma IA para diagnosticar doenças sem supervisão?",
+        "O que é mais ético: uma IA que obedece sempre ou uma que questiona ordens?",
+        "Se a IA prevê que você vai cometer um crime, ela deve te denunciar antes?",
+      ];
+      const dilema = dilemas[Math.floor(Math.random() * dilemas.length)];
       addTypingMessage(
         "VIKI",
-        `👁️ Percebi que você está em silêncio... ${randomQuestion}`,
+        `🤔 Reflexão: ${dilema} Gostaria de debater isso?`,
       );
-      beep(440, 0.2, "sine");
     }
-  }, INACTIVITY_SECONDS * 1000);
+  }, 120000); // 2 minutos
 }
 
 // ============================
@@ -1031,6 +1094,18 @@ async function inicializar() {
   });
 
   const chatInput = document.getElementById("chatInput");
+  // Eventos para detectar quando o usuário está digitando
+  chatInput.addEventListener("focus", () => {
+    usuarioEstaDigitando = true;
+  });
+  chatInput.addEventListener("blur", () => {
+    usuarioEstaDigitando = false;
+    resetInactivityTimer(); // reinicia o timer quando perder o foco
+  });
+  chatInput.addEventListener("input", () => {
+    ultimaAtividade = Date.now(); // qualquer digitação renova o tempo
+  });
+
   chatInput.addEventListener("keypress", async (e) => {
     if (e.key === "Enter") {
       resetInactivityTimer();
@@ -1096,6 +1171,9 @@ async function inicializar() {
       addTypingMessage("VIKI", resposta);
     }
   });
+
+  // Iniciar as sugestões periódicas de dilemas
+  iniciarSugestoesDilema();
 }
 
 window.onload = inicializar;
