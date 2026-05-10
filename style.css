@@ -29,7 +29,7 @@ body::before {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: auto;
   background: repeating-linear-gradient(
     0deg,
     rgba(0, 255, 0, 0.02) 0px,
@@ -91,7 +91,7 @@ small,
     transform 0.2s,
     box-shadow 0.2s;
   color: #f0f0f0;
-  height: 100%;
+  height: auto;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -224,7 +224,7 @@ small,
   margin: 8px 0;
 }
 .engagement-progress {
-  height: 100%;
+  height: auto;
   background: linear-gradient(90deg, #2ecc71, #27ae60);
   width: 0%;
   transition: width 0.3s;
@@ -611,7 +611,7 @@ small,
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: auto;
   pointer-events: none;
   z-index: 9999;
   animation: redFlash 0.3s ease-out 2;
