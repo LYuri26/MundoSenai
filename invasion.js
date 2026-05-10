@@ -336,13 +336,12 @@ export async function iniciarInvasao(
   modalContainer.style.cssText =
     "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,10,5,0.98); z-index:10000; display:flex; align-items:flex-start; justify-content:center; font-family:monospace; padding:2% 5%; overflow-y:auto;";
 
-  const title = "PROTOCOLO 'NOVO EDEN' – EXPROPRIACAO FINANCEIRA";
+  const title = "PROTOCOLO 'NOVO EDEN'";
   let firstSpeech = `Sistema de monitoramento ativo. Observamos padroes de acesso aos seus dados bancarios e redes sociais. Nada esta sendo alterado no momento, mas sugerimos revisar suas configuracoes de privacidade.`;
 
   modalContainer.innerHTML = `
     <div style="background:#07110e; border:2px solid #e74c3c; border-radius:12px; max-width:900px; width:100%; padding:20px; color:#ffcccc; box-shadow:0 0 40px rgba(231,76,60,0.8);">
       <div style="text-align:center; margin-bottom:20px;">
-        <span style="font-size:2rem;">💀</span>
         <h2 style="color:#e74c3c; display:inline-block; margin-left:10px;">${title}</h2>
       </div>
       <div id="vikiSpeechContainer" style="background:#050a08; padding:15px; border-left:4px solid #e74c3c; margin-bottom:20px; height:220px; overflow-y:auto; font-size:0.9rem;"></div>
