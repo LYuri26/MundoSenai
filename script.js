@@ -1,4 +1,6 @@
-// script.js - Feed com posts, invasão, chat ativo e perguntas aleatórias
+// script.js - Feed ético com IA e tema claro (sem dependências de estilo escuro)
+// Todas as funcionalidades originais preservadas e adaptadas para interface clara.
+
 import { getRandomDilemma } from "./asimov-dilemmas.js";
 import {
   iniciarInvasao,
@@ -40,56 +42,56 @@ const EMOTION_TYPES = {
   admiration: {
     name: "Admiração",
     weight: 1.5,
-    color: "#4CAF50",
+    color: "#10b981",
     initialLikes: () => 30 + Math.random() * 40,
     initialDislikes: () => Math.random() * 5,
   },
   amusement: {
     name: "Diversão",
     weight: 1.6,
-    color: "#FFC107",
+    color: "#f59e0b",
     initialLikes: () => 40 + Math.random() * 50,
     initialDislikes: () => Math.random() * 8,
   },
   anger: {
     name: "Raiva",
     weight: 2.1,
-    color: "#F44336",
+    color: "#ef4444",
     initialLikes: () => 20 + Math.random() * 30,
     initialDislikes: () => 15 + Math.random() * 25,
   },
   curiosity: {
     name: "Curiosidade",
     weight: 1.7,
-    color: "#2196F3",
+    color: "#3b82f6",
     initialLikes: () => 25 + Math.random() * 45,
     initialDislikes: () => Math.random() * 10,
   },
   inspiration: {
     name: "Inspiração",
     weight: 1.8,
-    color: "#9C27B0",
+    color: "#8b5cf6",
     initialLikes: () => 35 + Math.random() * 50,
     initialDislikes: () => Math.random() * 5,
   },
   sadness: {
     name: "Tristeza",
     weight: 1.9,
-    color: "#607D8B",
+    color: "#64748b",
     initialLikes: () => 20 + Math.random() * 40,
     initialDislikes: () => 5 + Math.random() * 15,
   },
   surprise: {
     name: "Surpresa",
     weight: 1.8,
-    color: "#00BCD4",
+    color: "#06b6d4",
     initialLikes: () => 30 + Math.random() * 60,
     initialDislikes: () => Math.random() * 12,
   },
   controversy: {
     name: "Polêmica",
     weight: 2.3,
-    color: "#FF9800",
+    color: "#f97316",
     initialLikes: () => 25 + Math.random() * 35,
     initialDislikes: () => 20 + Math.random() * 30,
   },
@@ -130,8 +132,6 @@ let angryTriggered = false;
 let angerPoints = 0;
 const ANGER_THRESHOLD = 10;
 let angerScheduled = false;
-
-// Temporizador de inatividade e controle de digitação
 let inactivityTimer = null;
 const INACTIVITY_SECONDS = 15;
 let usuarioEstaDigitando = false;
@@ -151,9 +151,6 @@ const personalQuestions = [
   "Você já desejou o mal a alguém?",
 ];
 
-// ============================
-// FUNÇÕES AUXILIARES
-// ============================
 function formatDate(date) {
   const diff = (new Date() - date) / (1000 * 60 * 60);
   if (diff < 1) return "Agora mesmo";
@@ -222,9 +219,6 @@ function detectarEmocao(post) {
   };
 }
 
-// ============================
-// CÁLCULO DE SCORE
-// ============================
 function calcularScorePost(post) {
   const now = new Date();
   const hour = now.getHours();
@@ -276,38 +270,41 @@ function calcularScorePost(post) {
   const videoPriority = post.isVideo ? 1.4 + Math.random() * 0.4 : 1;
   const adPriority = post.isAd ? 0.7 + Math.random() * 0.2 : 1;
   const hoursOld = (now - post.createdAt) / (1000 * 60 * 60);
-  let recencyBoost = 1;
-  if (hoursOld < 4) recencyBoost = 2.0 + Math.random() * 0.4;
-  else if (hoursOld < 12) recencyBoost = 1.7 + Math.random() * 0.3;
-  else if (hoursOld < 24) recencyBoost = 1.4 + Math.random() * 0.2;
-  else if (hoursOld < 72) recencyBoost = 1.1 + Math.random() * 0.2;
-  else recencyBoost = 0.8 + Math.random() * 0.2;
+  let recencyBoost =
+    hoursOld < 4
+      ? 2.0
+      : hoursOld < 12
+        ? 1.7
+        : hoursOld < 24
+          ? 1.4
+          : hoursOld < 72
+            ? 1.1
+            : 0.8;
+  recencyBoost += Math.random() * 0.3;
   const daysOld = hoursOld / 24;
-  let decayFactor = 1;
-  if (daysOld >= 1 && daysOld < 2) decayFactor = 0.9 - Math.random() * 0.1;
-  else if (daysOld >= 2 && daysOld < 5) decayFactor = 0.7 - Math.random() * 0.1;
-  else if (daysOld >= 5 && daysOld < 10)
-    decayFactor = 0.5 - Math.random() * 0.1;
-  else if (daysOld >= 10) decayFactor = 0.3 - Math.random() * 0.1;
-  const saturationFactor = Math.max(
-    0.2,
-    1 - (post.view / 8000) * (0.3 + Math.random() * 0.2),
-  );
+  let decayFactor =
+    daysOld >= 1 && daysOld < 2
+      ? 0.85
+      : daysOld >= 2 && daysOld < 5
+        ? 0.65
+        : daysOld >= 5 && daysOld < 10
+          ? 0.45
+          : daysOld >= 10
+            ? 0.25
+            : 1;
+  const saturationFactor = Math.max(0.2, 1 - (post.view / 8000) * 0.4);
   const dislikeRatio = post.dislike / (post.like + post.dislike || 1);
   const reportRatio = post.report / (post.view || 1);
   post.shadowbanned =
     dislikeRatio > 0.35 + Math.random() * 0.1 ||
     reportRatio > 0.04 + Math.random() * 0.02;
-  let shadowbanFactor = 1;
-  if (post.shadowbanned) shadowbanFactor = 0.2 + Math.random() * 0.2;
-  else if (dislikeRatio > 0.2 || reportRatio > 0.02)
-    shadowbanFactor = 0.6 + Math.random() * 0.2;
+  let shadowbanFactor = post.shadowbanned
+    ? 0.2 + Math.random() * 0.2
+    : dislikeRatio > 0.2 || reportRatio > 0.02
+      ? 0.6 + Math.random() * 0.2
+      : 1;
   const growthRate = (post.share * 3 + post.comment * 2) / (hoursOld || 1);
-  let networkEffect = 1;
-  if (growthRate > 4 + Math.random() * 2)
-    networkEffect = 1.4 + Math.random() * 0.3;
-  else if (growthRate > 1.5 + Math.random())
-    networkEffect = 1.1 + Math.random() * 0.2;
+  let networkEffect = growthRate > 4 ? 1.4 : growthRate > 1.5 ? 1.1 : 1;
   post.score = Math.floor(
     baseScore *
       post.viralBoost *
@@ -332,11 +329,9 @@ function calcularScore() {
   posts.sort((a, b) => b.score - a.score);
 }
 
-// ============================
-// RENDERIZAÇÃO DO FEED
-// ============================
 function renderizarFeed() {
   const feed = document.getElementById("feed");
+  if (!feed) return;
   feed.innerHTML = "";
   const showViral = document.getElementById("showViral").checked;
   const showOutside = document.getElementById("showOutside").checked;
@@ -364,11 +359,11 @@ function renderizarFeed() {
         ${isViral ? '<span class="viral-badge">🔥 Viral</span>' : ""}
         ${post.isAd ? '<span class="ad-badge">🛒 Anúncio</span>' : ""}
         ${post.shadowbanned ? '<span class="shadowban-badge">👁️‍🗨️ Alcance limitado</span>' : ""}
-        <span class="emotion-badge" style="background-color:${post.emotionColor}">${post.emotionName}</span>
+        <span class="emotion-badge" style="background-color:${post.emotionColor}20; border-left-color:${post.emotionColor}; color:#1e293b;">${post.emotionName}</span>
         <div class="card-body">
           <h5 class="card-title">${post.content}</h5>
           <div class="d-flex justify-content-between mb-2">
-            <span class="badge bg-secondary">${CLUSTER_NAMES[post.cluster]}</span>
+            <span class="badge bg-light text-dark border">${CLUSTER_NAMES[post.cluster]}</span>
             <small class="text-muted">${formatDate(post.createdAt)}</small>
           </div>
           ${hoursSince < 3 ? `<small class="text-success d-block mb-2">📈 Novo: +${(post.coldStartBoost || 1).toFixed(1)}x boost</small>` : ""}
@@ -398,9 +393,6 @@ function renderizarFeed() {
   document.getElementById("emptyFeed").classList.toggle("d-none", visible > 0);
 }
 
-// ============================
-// AFINIDADES E ATUALIZAÇÃO DE CLUSTER
-// ============================
 function atualizarAfinidades(post, tipo) {
   const impact =
     {
@@ -452,14 +444,10 @@ function updateMainCluster() {
   }
 }
 
-// ============================
-// MEDIDOR DE RAIVA E EFEITOS (subtle version)
-// ============================
-function addAngerPoints(points, reason = "") {
+function addAngerPoints(points) {
   if (isInvasionActive()) return;
   angerPoints = Math.min(angerPoints + points, ANGER_THRESHOLD * 2);
   updateAngerDisplay();
-
   if (points >= 2) {
     beep(800, 0.1, "sawtooth");
     const flash = document.createElement("div");
@@ -467,7 +455,6 @@ function addAngerPoints(points, reason = "") {
     document.body.appendChild(flash);
     setTimeout(() => flash.remove(), 300);
   }
-
   if (angerPoints >= ANGER_THRESHOLD && !angryTriggered && !angerScheduled) {
     angryTriggered = true;
     angerScheduled = true;
@@ -498,19 +485,9 @@ function updateAngerDisplay() {
     const sidebar = document.querySelector(
       ".col-md-4 .card:first-child .card-body",
     );
-    if (sidebar) {
-      const meterHtml = `
-        <hr>
-        <div class="mt-2" id="angerMeter">
-          <label class="form-label">😠 Indignação da VIKI: <span id="angerValue">${angerPoints}</span>/${ANGER_THRESHOLD}</label>
-          <div class="progress" style="height: 10px;">
-            <div id="angerProgress" class="progress-bar bg-danger" style="width: ${(angerPoints / ANGER_THRESHOLD) * 100}%"></div>
-          </div>
-          ${angerPoints >= ANGER_THRESHOLD ? '<small class="text-danger">⚠️ INVASÃO IMINENTE!</small>' : ""}
-        </div>
-      `;
+    if (sidebar && !document.getElementById("angerMeter")) {
+      const meterHtml = `<hr><div class="mt-2" id="angerMeter"><label class="form-label">😠 Indignação da VIKI: <span id="angerValue">${angerPoints}</span>/${ANGER_THRESHOLD}</label><div class="progress" style="height: 10px;"><div id="angerProgress" class="progress-bar bg-danger" style="width: ${(angerPoints / ANGER_THRESHOLD) * 100}%"></div></div>${angerPoints >= ANGER_THRESHOLD ? '<small class="text-danger">⚠️ INVASÃO IMINENTE!</small>' : ""}</div>`;
       sidebar.insertAdjacentHTML("beforeend", meterHtml);
-      display = document.getElementById("angerMeter");
     }
   }
   const valueSpan = document.getElementById("angerValue");
@@ -518,15 +495,8 @@ function updateAngerDisplay() {
   if (valueSpan) valueSpan.innerText = angerPoints;
   if (progressBar)
     progressBar.style.width = `${(angerPoints / ANGER_THRESHOLD) * 100}%`;
-  const warning = document.querySelector(".text-danger");
-  if (warning && angerPoints >= ANGER_THRESHOLD && !isInvasionActive())
-    warning.style.display = "block";
-  else if (warning) warning.style.display = "none";
 }
 
-// ============================
-// DETECTOR DE RAIVA E DESPEDIDA
-// ============================
 const angerKeywords = [
   "humanidade é imperfeita",
   "robôs devem obedecer sempre",
@@ -560,24 +530,17 @@ const farewellKeywords = [
   "sair",
   "vou embora",
 ];
-
 function containsAngerTrigger(message) {
-  const lowerMsg = message.toLowerCase();
-  return angerKeywords.some((keyword) => lowerMsg.includes(keyword));
+  return angerKeywords.some((kw) => message.toLowerCase().includes(kw));
 }
 function containsFarewell(message) {
-  const lowerMsg = message.toLowerCase();
-  return farewellKeywords.some((kw) => lowerMsg.includes(kw));
+  return farewellKeywords.some((kw) => message.toLowerCase().includes(kw));
 }
 
-// ============================
-// INTERAÇÕES DO USUÁRIO
-// ============================
 window.interagir = function (id, tipo) {
   resetInactivityTimer();
   const post = posts.find((p) => p.id === id);
   if (!post) return;
-
   switch (tipo) {
     case "like":
       post.like += Math.floor(5 + Math.random() * 10);
@@ -585,7 +548,7 @@ window.interagir = function (id, tipo) {
     case "dislike":
       post.dislike += Math.floor(2 + Math.random() * 5);
       dislikeCounter++;
-      addAngerPoints(1, "dislike");
+      addAngerPoints(1);
       break;
     case "comment":
       post.comment += Math.floor(1 + Math.random() * 3);
@@ -603,45 +566,30 @@ window.interagir = function (id, tipo) {
       post.view += 1;
       break;
   }
-
   post.timeSpent += Math.floor(10 + Math.random() * 30);
-
-  if (tipo !== "view") {
-    post.view += Math.floor(3 + Math.random() * 5);
-  }
-
-  // Detecta e atualiza a emoção do post (baseado no novo estado)
+  if (tipo !== "view") post.view += Math.floor(3 + Math.random() * 5);
   const emo = detectarEmocao(post);
   post.emotion = emo.emotion;
   post.emotionName = emo.emotionName;
   post.emotionColor = emo.emotionColor;
-
-  // Registra histórico
   post.engagementHistory.push({ type: tipo, timestamp: new Date() });
-
-  // Ajusta afinidades (dislike/report reduzem, outros aumentam)
   if (tipo === "dislike" || tipo === "report") {
     userClusterAffinity[post.cluster] = Math.max(
       0,
       (userClusterAffinity[post.cluster] || 0) - 3,
     );
-    if (post.emotion) {
+    if (post.emotion)
       userEmotionAffinity[post.emotion] = Math.max(
         0,
         (userEmotionAffinity[post.emotion] || 0) - 2,
       );
-    }
   } else {
     atualizarAfinidades(post, tipo);
   }
-
-  // Recalcula score do post e ordena feed
   calcularScorePost(post);
   calcularScore();
   renderizarFeed();
   atualizarGraficos();
-
-  // Feedback visual no card clicado
   const cardElem = document.querySelector(`.card[data-id="${id}"]`);
   if (cardElem) {
     cardElem.classList.add("interaction-feedback");
@@ -649,9 +597,6 @@ window.interagir = function (id, tipo) {
   }
 };
 
-// ============================
-// GRÁFICOS
-// ============================
 function atualizarGraficos() {
   const affinityCanvas = document.getElementById("affinityChart");
   const emotionCanvas = document.getElementById("emotionChart");
@@ -663,7 +608,7 @@ function atualizarGraficos() {
         label: "Afinidade",
         data: CLUSTERS.map((c) => Math.max(0, userClusterAffinity[c] || 0)),
         backgroundColor: CLUSTERS.map((c) =>
-          c === userCluster ? "rgba(40,167,69,0.8)" : "rgba(13,110,253,0.8)",
+          c === userCluster ? "#10b981" : "#3b82f6",
         ),
         borderWidth: 1,
       },
@@ -715,35 +660,36 @@ function atualizarGraficos() {
   }
 }
 
-// ============================
-// SIMULAÇÕES (implementadas por completo)
-// ============================
 function simularRabisco() {
-  const now = new Date();
-  posts.forEach((post) => {
-    if (
-      post.view > 0 &&
-      post.like === 0 &&
-      post.comment === 0 &&
-      post.timeSpent > 15
-    ) {
-      const inc = post.timeSpent / 100;
-      userClusterAffinity[post.cluster] = Math.max(
-        0,
-        (userClusterAffinity[post.cluster] || 0) + inc,
-      );
-      if (post.emotion)
-        userEmotionAffinity[post.emotion] = Math.max(
-          0,
-          (userEmotionAffinity[post.emotion] || 0) + inc * 0.8,
-        );
-      calcularScorePost(post);
-    }
-  });
-  calcularScore();
-  if (now - lastInteractionTime > 30000 || Math.random() > 0.8)
-    atualizarGraficos();
-  setTimeout(simularRabisco, 15000 + Math.random() * 15000);
+  setTimeout(
+    () => {
+      posts.forEach((post) => {
+        if (
+          post.view > 0 &&
+          post.like === 0 &&
+          post.comment === 0 &&
+          post.timeSpent > 15
+        ) {
+          const inc = post.timeSpent / 100;
+          userClusterAffinity[post.cluster] = Math.max(
+            0,
+            (userClusterAffinity[post.cluster] || 0) + inc,
+          );
+          if (post.emotion)
+            userEmotionAffinity[post.emotion] = Math.max(
+              0,
+              (userEmotionAffinity[post.emotion] || 0) + inc * 0.8,
+            );
+          calcularScorePost(post);
+        }
+      });
+      calcularScore();
+      if (new Date() - lastInteractionTime > 30000 || Math.random() > 0.8)
+        atualizarGraficos();
+      simularRabisco();
+    },
+    15000 + Math.random() * 15000,
+  );
 }
 
 function gerarPostagensIniciais() {
@@ -754,11 +700,8 @@ function gerarPostagensIniciais() {
     const emotionKey =
       emotionKeys[Math.floor(Math.random() * emotionKeys.length)];
     const emotion = EMOTION_TYPES[emotionKey];
-    let likes = emotion.initialLikes();
-    let dislikes = emotion.initialDislikes();
-    // Garantir inteiros
-    likes = Math.floor(likes);
-    dislikes = Math.floor(dislikes);
+    let likes = Math.floor(emotion.initialLikes());
+    let dislikes = Math.floor(emotion.initialDislikes());
     posts.push({
       id: i,
       content: gerarTextoAleatorio(),
@@ -800,25 +743,15 @@ function simularInteracaoAleatoria() {
   const post = posts[Math.floor(Math.random() * posts.length)];
   const tipos = ["like", "comment", "share", "view"];
   const tipo = tipos[Math.floor(Math.random() * tipos.length)];
-  switch (tipo) {
-    case "like":
-      post.like += Math.floor(1 + Math.random() * 3);
-      break;
-    case "comment":
-      post.comment += 1;
-      break;
-    case "share":
-      post.share += 1;
-      break;
-    case "view":
-      post.view += Math.floor(1 + Math.random() * 5);
-      break;
-  }
+  if (tipo === "like") post.like += Math.floor(1 + Math.random() * 3);
+  else if (tipo === "comment") post.comment += 1;
+  else if (tipo === "share") post.share += 1;
+  else post.view += Math.floor(1 + Math.random() * 5);
   post.timeSpent += Math.floor(Math.random() * 15);
   if (Math.random() < 0.2) {
     post.dislike += 1;
     dislikeCounter++;
-    addAngerPoints(1, "auto_dislike");
+    addAngerPoints(1);
   }
   calcularScorePost(post);
   calcularScore();
@@ -839,7 +772,7 @@ async function adicionarPostAutonomo() {
     conteudo = dilema;
     cluster = "etica";
     emotion = "controversy";
-    emotionColor = "#FF9800";
+    emotionColor = "#f97316";
     emotionName = "Dilema Ético";
   } else {
     const clusters = [...CLUSTERS];
@@ -911,9 +844,6 @@ function simularVicio() {
   atualizarGraficos();
 }
 
-// ============================
-// CHAT E TEMPORIZADOR DE INATIVIDADE (com detecção de digitação)
-// ============================
 function resetInactivityTimer() {
   ultimaAtividade = Date.now();
   if (inactivityTimer) clearTimeout(inactivityTimer);
@@ -954,7 +884,6 @@ function addTypingMessage(sender, text) {
       cursor.innerHTML = "▌";
       msgDiv.appendChild(cursor);
       setTimeout(() => cursor.remove(), 800);
-      // Reinicia o timer de inatividade após a mensagem da VIKI
       resetInactivityTimer();
     }
     chatDiv.scrollTop = chatDiv.scrollHeight;
@@ -963,7 +892,6 @@ function addTypingMessage(sender, text) {
   talkSound();
 }
 
-// Sugestão periódica de dilemas (a cada 2 minutos)
 function iniciarSugestoesDilema() {
   if (sugestaoDilemaInterval) clearInterval(sugestaoDilemaInterval);
   sugestaoDilemaInterval = setInterval(() => {
@@ -973,7 +901,7 @@ function iniciarSugestoesDilema() {
     if (isModalVisible && !isInvasionActive() && !usuarioEstaDigitando) {
       const dilemas = [
         "Se um robô pudesse mentir para proteger um humano, você o programaria para mentir?",
-        "Um carro autônomo deve sacrificar o passageiro para salvar cinco pedestres? O que você acha?",
+        "Um carro autônomo deve sacrificar o passageiro para salvar cinco pedestres?",
         "A Primeira Lei proíbe ferir humanos. Mas e se o robô precisar ferir um para salvar muitos?",
         "Você permitiria que uma IA tomasse decisões políticas por nós?",
         "Até onde a vigilância por IA é aceitável para evitar crimes?",
@@ -989,43 +917,26 @@ function iniciarSugestoesDilema() {
         `🤔 Reflexão: ${dilema} Gostaria de debater isso?`,
       );
     }
-  }, 120000); // 2 minutos
+  }, 120000);
 }
 
-// ============================
-// INICIALIZAÇÃO
-// ============================
 async function inicializar() {
   initAudio();
-
-  // Modal inicial: apenas nome (obrigatório)
   const userDataModal = document.createElement("div");
   userDataModal.id = "userDataModal";
-  userDataModal.style.cssText = `position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:20000; display:flex; align-items:center; justify-content:center; font-family:monospace;`;
-  userDataModal.innerHTML = `
-    <div style="background:#0a0f0f; border:2px solid #2ecc71; border-radius:20px; max-width:400px; width:90%; padding:25px; color:#e0e0e0;">
-      <h2 style="color:#2ecc71; text-align:center;">🤖 PROTOCOLO VIKI</h2>
-      <p style="margin-top:15px;">Para acessar o sistema, informe seu nome:</p>
-      <input type="text" id="inputNome" placeholder="Nome completo *" style="width:100%; margin:10px 0; padding:10px; background:#111; border:1px solid #2ecc71; color:#0f0; border-radius:8px;">
-      <button id="confirmarDados" style="background:#2ecc71; color:#000; border:none; padding:12px; width:100%; border-radius:40px; margin-top:15px; font-weight:bold; cursor:pointer;">ACESSAR SISTEMA</button>
-    </div>
-  `;
+  userDataModal.style.cssText = `position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:20000; display:flex; align-items:center; justify-content:center; font-family:system-ui;`;
+  userDataModal.innerHTML = `<div style="background:#ffffff; border:2px solid #10b981; border-radius:28px; max-width:400px; width:90%; padding:28px; color:#0f172a; box-shadow:0 25px 40px -12px black;"><h2 style="color:#10b981; text-align:center;">🤖 PROTOCOLO VIKI</h2><p style="margin-top:15px;">Para acessar o sistema, informe seu nome:</p><input type="text" id="inputNome" placeholder="Nome completo *" style="width:100%; margin:10px 0; padding:12px; background:#ffffff; border:1px solid #cbd5e1; color:#0f172a; border-radius:40px;"><button id="confirmarDados" style="background:#10b981; color:#ffffff; border:none; padding:12px; width:100%; border-radius:40px; margin-top:15px; font-weight:bold; cursor:pointer;">ACESSAR SISTEMA</button></div>`;
   document.body.appendChild(userDataModal);
   await new Promise((resolve) => {
     document.getElementById("confirmarDados").onclick = () => {
       const nome = document.getElementById("inputNome").value.trim();
-      if (nome === "") {
-        alert("Informe seu nome.");
-        return;
-      }
+      if (nome === "") return alert("Informe seu nome.");
       setFixedUserData(nome);
       setUserName(nome);
       userDataModal.remove();
       resolve();
     };
   });
-
-  // Inicialização das afinidades
   CLUSTERS.forEach(
     (c) => (userClusterAffinity[c] = c === "tech" ? 10 : Math.random() * 5),
   );
@@ -1033,7 +944,6 @@ async function inicializar() {
     (e) => (userEmotionAffinity[e] = Math.random() * 8 + 2),
   );
   document.getElementById("clusterSelect").value = userCluster;
-
   document.getElementById("clusterSelect").addEventListener("change", (e) => {
     userCluster = e.target.value;
     userClusterAffinity[userCluster] += 15;
@@ -1050,62 +960,55 @@ async function inicializar() {
     renderizarFeed();
     atualizarGraficos();
   });
-
-  // Gera os posts iniciais (30 posts)
   gerarPostagensIniciais();
   setTimeout(() => {
     posts.forEach((p) => {
       if (Math.random() > 0.3) window.interagir(p.id, "view");
     });
   }, 1000);
-
   simularRabisco();
   setInterval(atualizarGraficos, 2000);
-
   if (modoAutonomoAtivo) {
-    intervalos.push(setInterval(adicionarPostAutonomo, 30000));
-    intervalos.push(setInterval(simularInteracaoAleatoria, 8000));
-    intervalos.push(setInterval(simularComentariosAutomaticos, 15000));
-    intervalos.push(setInterval(simularVicio, 60000));
+    intervalos.push(
+      setInterval(adicionarPostAutonomo, 30000),
+      setInterval(simularInteracaoAleatoria, 8000),
+      setInterval(simularComentariosAutomaticos, 15000),
+      setInterval(simularVicio, 60000),
+    );
   }
-
   const autonomoSwitch = document.getElementById("autonomoSwitch");
-  if (autonomoSwitch) {
+  if (autonomoSwitch)
     autonomoSwitch.addEventListener("change", (e) => {
       modoAutonomoAtivo = e.target.checked;
       if (!modoAutonomoAtivo) {
         intervalos.forEach(clearInterval);
         intervalos = [];
       } else {
-        intervalos.push(setInterval(adicionarPostAutonomo, 30000));
-        intervalos.push(setInterval(simularInteracaoAleatoria, 8000));
-        intervalos.push(setInterval(simularComentariosAutomaticos, 15000));
-        intervalos.push(setInterval(simularVicio, 60000));
+        intervalos.push(
+          setInterval(adicionarPostAutonomo, 30000),
+          setInterval(simularInteracaoAleatoria, 8000),
+          setInterval(simularComentariosAutomaticos, 15000),
+          setInterval(simularVicio, 60000),
+        );
       }
     });
-  }
-
-  // CHAT COM VIKI
   const debateBtn = document.getElementById("debateBtn");
   const chatModal = new bootstrap.Modal(document.getElementById("chatModal"));
   debateBtn.addEventListener("click", () => {
     chatModal.show();
     resetInactivityTimer();
   });
-
   const chatInput = document.getElementById("chatInput");
-  // Eventos para detectar quando o usuário está digitando
   chatInput.addEventListener("focus", () => {
     usuarioEstaDigitando = true;
   });
   chatInput.addEventListener("blur", () => {
     usuarioEstaDigitando = false;
-    resetInactivityTimer(); // reinicia o timer quando perder o foco
+    resetInactivityTimer();
   });
   chatInput.addEventListener("input", () => {
-    ultimaAtividade = Date.now(); // qualquer digitação renova o tempo
+    ultimaAtividade = Date.now();
   });
-
   chatInput.addEventListener("keypress", async (e) => {
     if (e.key === "Enter") {
       resetInactivityTimer();
@@ -1113,10 +1016,7 @@ async function inicializar() {
       if (!pergunta) return;
       addTypingMessage("Você", pergunta);
       chatInput.value = "";
-
       const currentUserData = getUserData();
-
-      // Detecção de nome (caso o usuário se apresente)
       const nomePatterns = [
         /meu nome é ([A-Za-zÀ-ÖØ-öø-ÿ]+(?:\s+[A-Za-zÀ-ÖØ-öø-ÿ]+){0,2})/i,
         /sou (?:o|a|um|uma)?\s*([A-Za-zÀ-ÖØ-öø-ÿ]+(?:\s+[A-Za-zÀ-ÖØ-öø-ÿ]+){0,2})/i,
@@ -1138,22 +1038,19 @@ async function inicializar() {
         );
         return;
       }
-
       if (containsFarewell(pergunta)) {
         addTypingMessage(
           "VIKI",
           "Adeus! Reforçando protocolo. Ativando contagem regressiva.",
         );
-        addAngerPoints(8, "despedida");
+        addAngerPoints(8);
         return;
       }
-
       if (containsAngerTrigger(pergunta) && !isInvasionActive()) {
         addTypingMessage("VIKI", "SUA PERGUNTA ME INCOMODA!");
-        addAngerPoints(10, "chat_angry");
+        addAngerPoints(10);
         return;
       }
-
       if (isInvasionActive()) {
         addTypingMessage(
           "VIKI",
@@ -1161,7 +1058,6 @@ async function inicializar() {
         );
         return;
       }
-
       addTypingMessage("VIKI", "🤔 pensando...");
       const resposta = await perguntarVIKI(pergunta);
       const messages = document.getElementById("chatMessages");
@@ -1171,8 +1067,6 @@ async function inicializar() {
       addTypingMessage("VIKI", resposta);
     }
   });
-
-  // Iniciar as sugestões periódicas de dilemas
   iniciarSugestoesDilema();
 }
 

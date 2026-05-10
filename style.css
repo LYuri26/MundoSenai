@@ -1,9 +1,9 @@
 /* ============================================
-   TEMA HACKER RESPONSIVO - FUNDO PRETO, LETRAS BRANCAS
-   CORREÇÃO DE CONTRASTE E RESPONSIVIDADE
+   TEMA CLARO PROFISSIONAL - FUNDO BRANCO, TEXTOS PRETOS
+   CORREÇÃO: BADGES NÃO SOBREPÕEM O TEXTO DOS POSTS
    ============================================ */
 
-@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap");
 
 * {
   box-sizing: border-box;
@@ -14,66 +14,20 @@ html {
 }
 
 body {
-  background-color: #0a0c10;
-  font-family: "Segoe UI", "Fira Code", "Courier New", monospace;
-  color: #f0f0f0;
-  transition: background-color 0.3s ease;
+  background-color: #f5f7fb;
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  color: #1e293b;
   margin: 0;
   padding: 0;
 }
 
-/* Efeito de scanline sutil (não atrapalha) */
-body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: auto;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(0, 255, 0, 0.02) 0px,
-    rgba(0, 255, 0, 0.02) 1px,
-    transparent 1px,
-    transparent 3px
-  );
-  pointer-events: none;
-  z-index: 9999;
-}
-
-/* FORÇAR CORES CLARAS EM TODOS OS TEXTOS */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-span,
-label,
-a,
-li,
-.card-title,
-.lead,
-.text-muted,
-.score,
-.card-text,
-small,
-.view-count,
-.like-count,
-.dislike-count,
-.comment-count,
-.share-count,
-.time-count,
-.save-count {
-  color: #e0f0e0 !important;
-}
-
-.text-muted {
-  color: #a0c0a0 !important;
-}
-
-/* CONTAINER PRINCIPAL RESPONSIVO */
+/* Containers responsivos */
 .container {
   padding-left: 15px;
   padding-right: 15px;
@@ -81,33 +35,42 @@ small,
   margin: 0 auto;
 }
 
-/* CARDS */
+/* CARDS - Branco com sombra suave */
 .card {
-  background-color: #0c1018;
-  border: 1px solid #2a3a30;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.03),
+    0 1px 2px rgba(0, 0, 0, 0.05);
   transition:
     transform 0.2s,
     box-shadow 0.2s;
-  color: #f0f0f0;
+  color: #1e293b;
   height: auto;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
 }
 
+.card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* Espaço interno do card: padding-top aumentado para não colidir com os badges absolutos */
 .card-body {
-  padding: 1rem;
+  padding: 1.25rem;
+  padding-top: 80px; /* espaço extra para os badges fixos no topo */
   position: relative;
   min-height: 140px;
-  padding-top: 60px;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  background: white;
 }
 
-/* Badges posicionadas corretamente */
+/* Badges flutuantes - reposicionadas para não interferir no título */
 .viral-badge,
 .ad-badge,
 .shadowban-badge,
@@ -115,49 +78,56 @@ small,
   position: absolute;
   z-index: 10;
   font-size: 0.7rem;
-  font-weight: bold;
-  padding: 3px 12px;
-  border-radius: 20px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 30px;
   white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  pointer-events: none; /* evita interferência em cliques */
 }
 
 /* Anúncio - canto superior esquerdo */
 .ad-badge {
-  background: #e63946;
-  color: white;
-  top: 10px;
-  left: 10px;
+  background: #fee2e2;
+  color: #b91c1c;
+  top: 12px;
+  left: 12px;
+  border-left: 3px solid #dc2626;
 }
 
 /* Viral - canto superior direito */
 .viral-badge {
-  background: #ff8800;
-  color: #000;
-  top: 10px;
-  right: 10px;
+  background: #fff3e3;
+  color: #c2410c;
+  top: 12px;
+  right: 12px;
+  border-right: 3px solid #f97316;
 }
 
-/* Shadowban - centralizado no topo */
+/* Shadowban - centralizado no topo, abaixo dos outros badges */
 .shadowban-badge {
-  background: #5a6e7c;
-  color: #f0f0f0;
-  top: 10px;
+  background: #eef2ff;
+  color: #1e40af;
+  top: 50px; /* deslocado para baixo para não conflitar com viral/ad */
   left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
+  border: 1px solid #cbd5e1;
 }
 
-/* Emoção - abaixo do anúncio, alinhado à esquerda */
+/* Emoção - alinhada à esquerda, abaixo do anúncio */
 .emotion-badge {
-  background: #1e2a36;
-  border-left: 3px solid #2ecc71;
+  background: #f8fafc;
+  border-left: 4px solid #3b82f6;
   border-radius: 0 20px 20px 0;
-  top: 45px;
+  top: 52px; /* abaixo do ad-badge (12px + altura) */
   left: 0;
-  padding: 3px 12px;
+  padding: 4px 14px;
+  font-weight: 500;
+  color: #0f172a;
 }
 
-/* Título do card */
+/* Título dos cards - garantindo que não seja coberto */
 .card-title {
   margin-top: 0;
   padding-top: 0;
@@ -165,133 +135,199 @@ small,
   word-break: break-word;
   margin-bottom: 0.75rem;
   font-size: 1.1rem;
-  line-height: 1.3;
+  line-height: 1.4;
+  font-weight: 600;
+  color: #0f172a !important;
 }
 
 .score {
-  font-weight: bold;
-  color: #2ecc71 !important;
-  text-shadow: 0 0 2px #0f0;
+  font-weight: 700;
+  color: #059669 !important;
+  background: #ecfdf5;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  display: inline-block;
 }
 
-/* BOTÕES */
+/* BOTÕES - tema claro refinado */
 .btn {
-  font-family: monospace;
+  font-family: "Inter", sans-serif;
   font-size: 0.75rem;
-  font-weight: 600;
-  border-radius: 20px;
-  transition: all 0.2s;
-  background-color: #1a2220;
-  border: 1px solid #2ecc71;
-  color: #2ecc71;
-  padding: 0.25rem 0.75rem;
+  font-weight: 500;
+  border-radius: 40px;
+  transition: all 0.2s ease;
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #1e293b;
+  padding: 0.3rem 0.9rem;
   margin: 0.125rem;
 }
+
 .btn:hover {
-  background-color: #2ecc71;
-  color: #000;
-  box-shadow: 0 0 8px #2ecc71;
-}
-.btn-outline-success,
-.btn-outline-danger,
-.btn-outline-primary,
-.btn-outline-secondary,
-.btn-outline-warning {
-  background-color: #0c1018;
-}
-.btn-outline-success:hover {
-  background-color: #2ecc71;
-}
-.btn-outline-danger:hover {
-  background-color: #e74c3c;
-}
-.btn-outline-primary:hover {
-  background-color: #3498db;
-}
-.btn-outline-secondary:hover {
-  background-color: #6c757d;
-}
-.btn-outline-warning:hover {
-  background-color: #f39c12;
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+  transform: translateY(-1px);
 }
 
-/* BARRAS DE ENGAJAMENTO */
+.btn-outline-success:hover {
+  background-color: #10b981;
+  border-color: #10b981;
+  color: white;
+}
+
+.btn-outline-danger:hover {
+  background-color: #ef4444;
+  border-color: #ef4444;
+  color: white;
+}
+
+.btn-outline-primary:hover {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #64748b;
+  border-color: #64748b;
+  color: white;
+}
+
+.btn-outline-warning:hover {
+  background-color: #f59e0b;
+  border-color: #f59e0b;
+  color: white;
+}
+
+/* Barras de engajamento */
 .engagement-bar {
   height: 6px;
-  background-color: #1e2a2a;
-  border-radius: 3px;
+  background-color: #e2e8f0;
+  border-radius: 4px;
   overflow: hidden;
-  margin: 8px 0;
+  margin: 10px 0;
 }
+
 .engagement-progress {
   height: auto;
-  background: linear-gradient(90deg, #2ecc71, #27ae60);
+  background: linear-gradient(90deg, #10b981, #34d399);
   width: 0%;
   transition: width 0.3s;
 }
+
 .progress {
-  background-color: #1e2a2a;
-  border-radius: 4px;
+  background-color: #e2e8f0;
+  border-radius: 20px;
   height: 10px;
 }
+
 .progress-bar {
-  background-color: #e74c3c;
-  box-shadow: 0 0 4px #ff3300;
+  background-color: #dc2626;
+  border-radius: 20px;
 }
 
-/* GRÁFICOS - Responsivos e legíveis */
+/* GRÁFICOS - responsivos e com fundo claro */
 .chart-container {
   position: relative;
   width: 100%;
   min-height: 200px;
   margin: 0 auto;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 8px;
 }
+
 .chart-container canvas {
-  filter: brightness(0.95) contrast(1.2);
-  background-color: #0c1015;
-  border-radius: 8px;
-  padding: 4px;
+  border-radius: 12px;
   max-width: 100%;
   height: auto;
 }
 
-/* ANIMAÇÕES */
-@keyframes pulse {
+/* Animações leves */
+@keyframes pulseLight {
   0% {
-    text-shadow: 0 0 1px #0f0;
+    background-color: #ffffff;
   }
   50% {
-    text-shadow: 0 0 8px #0f0;
+    background-color: #fef9c3;
   }
   100% {
-    text-shadow: 0 0 1px #0f0;
+    background-color: #ffffff;
   }
 }
-@keyframes shake {
+
+@keyframes shakeSoft {
   0% {
     transform: translateX(0);
   }
   25% {
-    transform: translateX(-3px);
+    transform: translateX(-2px);
   }
   75% {
-    transform: translateX(3px);
+    transform: translateX(2px);
   }
   100% {
     transform: translateX(0);
   }
 }
-@keyframes glitchPulse {
-  0% {
-    background: rgba(0, 255, 0, 0.02);
-  }
-  50% {
-    background: rgba(0, 255, 0, 0.15);
-  }
-  100% {
-    background: rgba(0, 255, 0, 0.02);
-  }
+
+/* Modo invasão adaptado para tema claro */
+.invasion-mode {
+  filter: brightness(0.99);
+  background-color: #fff5f0 !important;
 }
+
+.invasion-mode .card {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 2px #fecaca;
+}
+
+#glitchOverlay {
+  animation: pulseLight 0.3s infinite;
+}
+
+/* Modal do chat e invasão (tema claro) */
+.modal-content,
+.bg-dark,
+.bg-black {
+  background-color: #ffffff !important;
+  color: #1e293b !important;
+}
+
+.modal-header,
+.modal-footer {
+  border-color: #e2e8f0 !important;
+}
+
+.btn-close {
+  filter: invert(0);
+  opacity: 0.7;
+}
+
+#chatMessages {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
+  font-family: "Inter", monospace;
+}
+
+#chatMessages strong {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.typing-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 1.2em;
+  background-color: #dc2626;
+  vertical-align: middle;
+  margin-left: 4px;
+  border-radius: 2px;
+  animation: blinkCursor 0.9s step-end infinite;
+}
+
 @keyframes blinkCursor {
   0%,
   100% {
@@ -302,310 +338,38 @@ small,
   }
 }
 
-/* MODO INVASÃO */
-.invasion-mode {
-  filter: brightness(1.05) contrast(1.1);
-  background-color: #030706 !important;
-}
-.invasion-mode .card {
-  border-color: #ff4422 !important;
-  box-shadow: 0 0 20px rgba(255, 68, 34, 0.4);
-}
-#glitchOverlay {
-  animation: glitchPulse 0.3s infinite;
-}
-#vikiModal {
-  background: rgba(0, 10, 8, 0.97);
-  backdrop-filter: blur(5px);
-  font-family: "Fira Code", monospace;
-}
-#vikiModal > div {
-  background: #0c1218;
-  border: 2px solid #2ecc71;
-  border-radius: 20px;
-  box-shadow: 0 0 40px rgba(46, 204, 113, 0.6);
-  color: #e0ffe0;
-  max-width: 95%;
-  margin: 5% auto;
-}
-#vikiModal h2 {
-  font-family: "Fira Code", monospace;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: #2ecc71;
-  font-size: 1.2rem;
-}
-#vikiSpeechContainer {
-  background: #010a05;
-  border-left: 4px solid #2ecc71;
-  border-radius: 12px;
-  padding: 0.75rem;
-  height: 200px;
-  overflow-y: auto;
-  font-size: 0.85rem;
-  line-height: 1.4;
-  color: #d0ffd0;
-}
-#terminalLog {
-  background: #030b08;
-  border: 1px solid #2ecc71;
-  border-radius: 8px;
-  padding: 8px;
-  font-size: 0.75rem;
-  max-height: 100px;
-  overflow-y: auto;
-}
-#threatMessage {
-  font-size: 0.85rem;
-  font-weight: bold;
-  color: #ffaa66;
-  animation: pulse 1.5s infinite;
-}
-#closeInvasionBtn {
-  background: #1a1f1a;
-  border: 1px solid #e74c3c;
-  color: #ff8866;
-  border-radius: 40px;
-  padding: 6px 20px;
-  font-weight: bold;
-  transition: 0.2s;
-}
-#closeInvasionBtn:hover {
-  background: #e74c3c;
-  color: #000;
-  box-shadow: 0 0 12px #e74c3c;
-}
-
-/* CHAT */
-#chatMessages {
-  background: #030a08;
-  border: 1px solid #2ecc71;
-  border-radius: 12px;
-  padding: 12px;
-  font-family: "Segoe UI", "Fira Code", monospace;
-  font-size: 0.85rem;
-  line-height: 1.5;
-  color: #d0ffd0;
-  height: 300px;
-  overflow-y: auto;
-}
-#chatMessages strong {
-  color: #2ecc71;
-  font-weight: 600;
-}
-.typing-cursor {
-  display: inline-block;
-  width: 9px;
-  height: 1.2em;
-  background-color: #2ecc71;
-  vertical-align: middle;
-  margin-left: 5px;
-  border-radius: 2px;
-  animation: blinkCursor 0.9s step-end infinite;
-}
 #chatInput {
-  background: #0c1218;
-  border: 1px solid #2ecc71;
-  color: #d0f0d0;
-  font-family: monospace;
-  border-radius: 30px;
+  background: white;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+  font-family: "Inter", sans-serif;
+  border-radius: 40px;
   padding: 8px 16px;
 }
+
 #chatInput:focus {
   outline: none;
-  border-color: #2ecc71;
-  box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px #fee2e2;
 }
 
-/* ============================================
-   RESPONSIVIDADE: TELAS MÉDIAS, PEQUENAS E EXTRA PEQUENAS
-   ============================================ */
-
-/* Tablets e telas médias (até 992px) */
-@media (max-width: 992px) {
-  html {
-    font-size: 15px;
-  }
-  .container {
-    max-width: 960px;
-  }
-  .card-body {
-    padding-top: 65px;
-  }
-  .emotion-badge {
-    top: 42px;
-  }
+/* Medidor de raiva (light) */
+#angerMeter {
+  margin-top: 12px;
+  background: #f1f5f9;
+  padding: 10px;
+  border-radius: 20px;
 }
 
-/* Celulares grandes / tablets pequenos (até 768px) */
-@media (max-width: 768px) {
-  html {
-    font-size: 14px;
-  }
-  .container {
-    max-width: 720px;
-  }
-  .card-body {
-    padding-top: 75px;
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
-  }
-  .emotion-badge {
-    top: 48px;
-    font-size: 0.65rem;
-  }
-  .viral-badge,
-  .ad-badge,
-  .shadowban-badge {
-    font-size: 0.6rem;
-    padding: 2px 8px;
-    top: 8px;
-  }
-  .btn-group .btn {
-    font-size: 0.65rem;
-    margin: 2px;
-    padding: 0.2rem 0.5rem;
-  }
-  .card-title {
-    font-size: 1rem;
-  }
-  .score {
-    font-size: 0.9rem;
-  }
-
-  /* Gráficos */
-  .chart-container {
-    min-height: 180px;
-  }
-  .chart-container canvas {
-    height: 180px !important;
-    width: 100% !important;
-  }
-
-  /* Sidebar e feed empilhados */
-  .row {
-    flex-direction: column;
-  }
-  .col-md-4,
-  .col-md-8 {
-    width: 100%;
-    max-width: 100%;
-    flex: 0 0 100%;
-  }
-
-  /* Modal chat */
-  #chatMessages {
-    height: 250px;
-  }
-  #vikiModal > div {
-    width: 95%;
-    padding: 1rem;
-  }
-  #vikiSpeechContainer {
-    height: 180px;
-  }
+#angerMeter .progress {
+  background-color: #e2e8f0;
 }
 
-/* Celulares pequenos (até 576px) */
-@media (max-width: 576px) {
-  html {
-    font-size: 13px;
-  }
-  .container {
-    padding-left: 10px;
-    padding-right: 10px;
-    max-width: 100%;
-  }
-  .card-body {
-    padding-top: 80px;
-  }
-  .emotion-badge {
-    top: 52px;
-    font-size: 0.6rem;
-  }
-  .viral-badge,
-  .ad-badge,
-  .shadowban-badge {
-    font-size: 0.55rem;
-    padding: 2px 6px;
-    top: 6px;
-  }
-  .btn-group .btn {
-    font-size: 0.6rem;
-    margin: 1px;
-  }
-  .engagement-bar {
-    height: 4px;
-  }
-  .progress {
-    height: 8px;
-  }
-  .chart-container {
-    min-height: 150px;
-  }
-  .chart-container canvas {
-    height: 150px !important;
-  }
-  #chatMessages {
-    height: 220px;
-    font-size: 0.75rem;
-  }
-  #chatInput {
-    font-size: 0.75rem;
-    padding: 6px 12px;
-  }
-  .position-fixed.bottom-0.end-0.m-4 {
-    margin: 0.75rem !important;
-  }
-  .btn-danger.rounded-circle {
-    width: 55px !important;
-    height: 55px !important;
-    font-size: 1.2rem;
-  }
-  h1 {
-    font-size: 1.6rem;
-  }
-  .lead {
-    font-size: 1rem;
-  }
+#angerMeter .progress-bar {
+  background-color: #ef4444;
 }
 
-/* Telas muito grandes (>= 1400px) */
-@media (min-width: 1400px) {
-  html {
-    font-size: 18px;
-  }
-  .container {
-    max-width: 1320px;
-  }
-  .card-body {
-    padding: 1.5rem;
-    padding-top: 70px;
-  }
-  .chart-container {
-    min-height: 240px;
-  }
-}
-
-/* SCROLL PERSONALIZADO */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #1a2a22;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb {
-  background: #2ecc71;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #27ae60;
-}
-
-/* Efeito de flash vermelho para alertas */
+/* Flash overlay mais suave */
 .flash-overlay {
   position: fixed;
   top: 0;
@@ -614,65 +378,161 @@ small,
   height: auto;
   pointer-events: none;
   z-index: 9999;
-  animation: redFlash 0.3s ease-out 2;
+  animation: redFlashLight 0.3s ease-out 2;
 }
-@keyframes redFlash {
+
+@keyframes redFlashLight {
   0% {
-    background: rgba(255, 0, 0, 0);
+    background: rgba(220, 38, 38, 0);
   }
   30% {
-    background: rgba(255, 0, 0, 0.6);
+    background: rgba(220, 38, 38, 0.15);
   }
   100% {
-    background: rgba(255, 0, 0, 0);
+    background: rgba(220, 38, 38, 0);
   }
 }
 
-/* Piscar intenso durante invasão */
-.invasion-mode-extreme {
-  animation: dangerStrobe 0.8s infinite !important;
-}
-@keyframes dangerStrobe {
-  0% {
-    background-color: #030706;
-  }
-  25% {
-    background-color: #220000;
-  }
-  50% {
-    background-color: #440000;
-  }
-  75% {
-    background-color: #220000;
-  }
-  100% {
-    background-color: #030706;
-  }
-}
-
-/* Ajustes para o medidor de raiva */
-#angerMeter {
-  margin-top: 10px;
-}
-#angerMeter .progress {
-  background-color: #2a2a2a;
-}
-#angerMeter .progress-bar {
-  background-color: #e74c3c;
-  transition: width 0.3s ease;
-}
-
-/* Evitar overflow horizontal */
-img,
-canvas,
-iframe,
-video {
-  max-width: 100%;
-  height: auto;
-}
-
-/* Corrigir exibição do feed no grid */
+/* Feed e responsividade */
 #feed {
   display: flex;
   flex-wrap: wrap;
+}
+
+/* Ajustes gerais de texto */
+.text-muted {
+  color: #475569 !important;
+}
+
+small,
+.small {
+  color: #475569;
+}
+
+/* Modal de apresentação do usuário - sobrescrito para tema claro */
+#userDataModal {
+  background: rgba(255, 255, 255, 0.96) !important;
+  backdrop-filter: blur(3px);
+}
+
+#userDataModal > div {
+  background: #ffffff !important;
+  border: 2px solid #10b981 !important;
+  box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.2);
+  color: #0f172a !important;
+}
+
+#userDataModal input {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+}
+
+/* Scroll personalizado claro */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Media queries para responsividade - mantendo badges legíveis */
+@media (max-width: 992px) {
+  html {
+    font-size: 15px;
+  }
+  .card-body {
+    padding-top: 85px;
+  }
+  .shadowban-badge {
+    top: 52px;
+  }
+  .emotion-badge {
+    top: 56px;
+  }
+}
+
+@media (max-width: 768px) {
+  .card-body {
+    padding-top: 95px;
+  }
+  .emotion-badge {
+    top: 60px;
+    font-size: 0.65rem;
+  }
+  .viral-badge,
+  .ad-badge,
+  .shadowban-badge {
+    font-size: 0.6rem;
+  }
+  .btn-group .btn {
+    font-size: 0.7rem;
+    margin: 2px;
+  }
+  .chart-container {
+    min-height: 180px;
+  }
+  .row {
+    flex-direction: column;
+  }
+  .col-md-4,
+  .col-md-8 {
+    width: 100%;
+    max-width: 100%;
+  }
+  .shadowban-badge {
+    top: 55px;
+  }
+}
+
+@media (max-width: 576px) {
+  .card-body {
+    padding-top: 105px;
+  }
+  .emotion-badge {
+    top: 66px;
+  }
+  .btn-danger.rounded-circle {
+    width: 56px !important;
+    height: 56px !important;
+  }
+  h1 {
+    font-size: 1.6rem;
+  }
+  .ad-badge,
+  .viral-badge {
+    top: 8px;
+  }
+  .shadowban-badge {
+    top: 48px;
+  }
+  .emotion-badge {
+    top: 58px;
+    font-size: 0.6rem;
+    padding: 3px 10px;
+  }
+}
+
+@media (min-width: 1400px) {
+  html {
+    font-size: 18px;
+  }
+  .chart-container {
+    min-height: 250px;
+  }
+  .card-body {
+    padding-top: 85px;
+  }
 }
