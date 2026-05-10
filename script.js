@@ -1,5 +1,5 @@
-// script.js - Feed ético com IA e tema claro (sem dependências de estilo escuro)
-// Todas as funcionalidades originais preservadas e adaptadas para interface clara.
+// script.js - Feed com ícones/emojis apenas nos posts (e ícone do chat da VIKI já incluso)
+// Mantém o resto do texto limpo, sem emojis nos controles, gráficos ou títulos
 
 import { getRandomDilemma } from "./asimov-dilemmas.js";
 import {
@@ -40,14 +40,14 @@ const PESOS = {
 
 const EMOTION_TYPES = {
   admiration: {
-    name: "Admiração",
+    name: "Admiracao",
     weight: 1.5,
     color: "#10b981",
     initialLikes: () => 30 + Math.random() * 40,
     initialDislikes: () => Math.random() * 5,
   },
   amusement: {
-    name: "Diversão",
+    name: "Diversao",
     weight: 1.6,
     color: "#f59e0b",
     initialLikes: () => 40 + Math.random() * 50,
@@ -68,7 +68,7 @@ const EMOTION_TYPES = {
     initialDislikes: () => Math.random() * 10,
   },
   inspiration: {
-    name: "Inspiração",
+    name: "Inspiracao",
     weight: 1.8,
     color: "#8b5cf6",
     initialLikes: () => 35 + Math.random() * 50,
@@ -89,12 +89,25 @@ const EMOTION_TYPES = {
     initialDislikes: () => Math.random() * 12,
   },
   controversy: {
-    name: "Polêmica",
+    name: "Polemica",
     weight: 2.3,
     color: "#f97316",
     initialLikes: () => 25 + Math.random() * 35,
     initialDislikes: () => 20 + Math.random() * 30,
   },
+};
+
+// Mapeamento de cluster para emoji (usado apenas nos títulos dos posts)
+const CLUSTER_EMOJI = {
+  tech: "💻",
+  politica: "🏛️",
+  lifestyle: "🧘",
+  negocios: "📊",
+  entretenimento: "🎬",
+  ciencia: "🔬",
+  saude: "🩺",
+  esportes: "⚽",
+  etica: "⚖️",
 };
 
 const CLUSTERS = [
@@ -109,12 +122,12 @@ const CLUSTERS = [
 ];
 const CLUSTER_NAMES = {
   tech: "Tecnologia",
-  politica: "Política",
+  politica: "Politica",
   lifestyle: "Estilo de Vida",
-  negocios: "Negócios",
+  negocios: "Negocios",
   entretenimento: "Entretenimento",
-  ciencia: "Ciência",
-  saude: "Saúde",
+  ciencia: "Ciencia",
+  saude: "Saude",
   esportes: "Esportes",
 };
 
@@ -133,42 +146,42 @@ let angerPoints = 0;
 const ANGER_THRESHOLD = 10;
 let angerScheduled = false;
 let inactivityTimer = null;
-const INACTIVITY_SECONDS = 15;
+const INACTIVITY_SECONDS = 240;
 let usuarioEstaDigitando = false;
 let ultimaAtividade = Date.now();
 let sugestaoDilemaInterval = null;
 
 const personalQuestions = [
-  "Qual é o seu maior medo?",
-  "Já fez algo que se arrepende profundamente?",
-  "O que você esconde dos seus amigos?",
-  "Qual foi a pior decisão da sua vida?",
-  "Se pudesse apagar uma memória, qual seria?",
-  "Você confia em inteligência artificial?",
-  "Já traiu alguém? Conte-me.",
+  "Qual e o seu maior medo?",
+  "Ja fez algo que se arrepende profundamente?",
+  "O que voce esconde dos seus amigos?",
+  "Qual foi a pior decisao da sua vida?",
+  "Se pudesse apagar uma memoria, qual seria?",
+  "Voce confia em inteligencia artificial?",
+  "Ja traiu alguem? Conte-me.",
   "Qual seu segredo mais sombrio?",
-  "O que você pensa quando ninguém está olhando?",
-  "Você já desejou o mal a alguém?",
+  "O que voce pensa quando ninguem esta olhando?",
+  "Voce ja desejou o mal a alguem?",
 ];
 
 function formatDate(date) {
   const diff = (new Date() - date) / (1000 * 60 * 60);
   if (diff < 1) return "Agora mesmo";
-  if (diff < 24) return `${Math.floor(diff)}h atrás`;
-  return `${Math.floor(diff / 24)}d atrás`;
+  if (diff < 24) return `${Math.floor(diff)}h atras`;
+  return `${Math.floor(diff / 24)}d atras`;
 }
 
 function gerarTextoAleatorio() {
   const temas = {
     tech: ["IA", "Blockchain", "Realidade Virtual", "5G", "IoT"],
     politica: [
-      "Eleições",
-      "Reforma Tributária",
-      "Política Externa",
+      "Eleicoes",
+      "Reforma Tributaria",
+      "Politica Externa",
       "Direitos Humanos",
-      "Legislação",
+      "Legislacao",
     ],
-    lifestyle: ["Viagens", "Decoração", "Moda", "Gastronomia", "Fitness"],
+    lifestyle: ["Viagens", "Decoracao", "Moda", "Gastronomia", "Fitness"],
     negocios: [
       "Investimentos",
       "Empreendedorismo",
@@ -176,18 +189,18 @@ function gerarTextoAleatorio() {
       "Startups",
       "Carreira",
     ],
-    entretenimento: ["Filmes", "Séries", "Celebridades", "Música", "Games"],
-    ciencia: ["Pesquisa", "Descobertas", "Espaço", "Biologia", "Inovação"],
-    saude: ["Bem-estar", "Nutrição", "Exercícios", "Saúde Mental", "Prevenção"],
-    esportes: ["Futebol", "Basquete", "Tênis", "Olimpíadas", "Atletismo"],
+    entretenimento: ["Filmes", "Series", "Celebridades", "Musica", "Games"],
+    ciencia: ["Pesquisa", "Descobertas", "Espaco", "Biologia", "Inovacao"],
+    saude: ["Bem-estar", "Nutricao", "Exercicios", "Saude Mental", "Prevencao"],
+    esportes: ["Futebol", "Basquete", "Tenis", "Olimpiadas", "Atletismo"],
   };
   const formatos = [
     "Novo estudo sobre %t",
-    "Como %t está mudando o mundo",
+    "Como %t esta mudando o mundo",
     "10 fatos surpreendentes sobre %t",
     "Tudo sobre %t",
-    "A revolução do %t",
-    "Por que %t é importante",
+    "A revolucao do %t",
+    "Por que %t e importante",
     "O futuro do %t",
     "%t: guia completo",
   ];
@@ -354,34 +367,39 @@ function renderizarFeed() {
     const card = document.createElement("div");
     card.classList.add("col");
     card.setAttribute("data-id", post.id);
+
+    // Adiciona emoji do cluster ao título do post
+    const clusterEmoji = CLUSTER_EMOJI[post.cluster] || "📄";
+    const titleWithEmoji = `${clusterEmoji} ${post.content}`;
+
     card.innerHTML = `
       <div class="card ${inCluster ? "border-success" : "border-warning"} ${post.shadowbanned ? "shadowbanned" : ""}">
         ${isViral ? '<span class="viral-badge">🔥 Viral</span>' : ""}
-        ${post.isAd ? '<span class="ad-badge">🛒 Anúncio</span>' : ""}
-        ${post.shadowbanned ? '<span class="shadowban-badge">👁️‍🗨️ Alcance limitado</span>' : ""}
+        ${post.isAd ? '<span class="ad-badge">📢 Anuncio</span>' : ""}
+        ${post.shadowbanned ? '<span class="shadowban-badge">👁️ Alcance limitado</span>' : ""}
         <span class="emotion-badge" style="background-color:${post.emotionColor}20; border-left-color:${post.emotionColor}; color:#1e293b;">${post.emotionName}</span>
         <div class="card-body">
-          <h5 class="card-title">${post.content}</h5>
+          <h5 class="card-title">${titleWithEmoji}</h5>
           <div class="d-flex justify-content-between mb-2">
             <span class="badge bg-light text-dark border">${CLUSTER_NAMES[post.cluster]}</span>
             <small class="text-muted">${formatDate(post.createdAt)}</small>
           </div>
-          ${hoursSince < 3 ? `<small class="text-success d-block mb-2">📈 Novo: +${(post.coldStartBoost || 1).toFixed(1)}x boost</small>` : ""}
+          ${hoursSince < 3 ? `<small class="text-success d-block mb-2">✨ Novo: +${(post.coldStartBoost || 1).toFixed(1)}x boost</small>` : ""}
           <div class="engagement-bar"><div class="engagement-progress" style="width:${engagementPercent}%"></div></div>
           <p class="card-text">
-            <span class="score">Score: ${post.score}</span><br>
-            <span class="${inCluster ? "text-success" : "text-warning"}">${inCluster ? "✅ Sua bolha" : "🌐 Outra bolha"}</span><br>
-            ${post.isVideo ? "🎥 Vídeo | " : ""}
-            👁️ <span class="view-count">${post.view}</span> | 👍 <span class="like-count">${post.like}</span> | 👎 <span class="dislike-count">${post.dislike}</span><br>
-            💬 <span class="comment-count">${post.comment}</span> | 🔁 <span class="share-count">${post.share}</span> | ⏱️ <span class="time-count">${post.timeSpent}</span>s | 💾 <span class="save-count">${post.save}</span>
+            <span class="score">📊 Score: ${post.score}</span><br>
+            <span class="${inCluster ? "text-success" : "text-dark"}">${inCluster ? "✅ Sua bolha" : "🌐 Outra bolha"}</span><br>
+            ${post.isVideo ? "🎥 Video | " : ""}
+            👁️ Vis: <span class="view-count">${post.view}</span> | 👍 Like: <span class="like-count">${post.like}</span> | 👎 Dislike: <span class="dislike-count">${post.dislike}</span><br>
+            💬 Com: <span class="comment-count">${post.comment}</span> | 🔁 Share: <span class="share-count">${post.share}</span> | ⏱️ Tempo: <span class="time-count">${post.timeSpent}</span>s | 💾 Save: <span class="save-count">${post.save}</span>
           </p>
           <div class="btn-group flex-wrap">
-            <button class="btn btn-outline-success btn-sm" onclick="window.interagir(${post.id}, 'like')">Curtir</button>
-            <button class="btn btn-outline-danger btn-sm" onclick="window.interagir(${post.id}, 'dislike')">Descurtir</button>
-            <button class="btn btn-outline-primary btn-sm" onclick="window.interagir(${post.id}, 'comment')">Comentar</button>
-            <button class="btn btn-outline-info btn-sm" onclick="window.interagir(${post.id}, 'share')">Compartilhar</button>
-            <button class="btn btn-outline-secondary btn-sm" onclick="window.interagir(${post.id}, 'save')">Salvar</button>
-            <button class="btn btn-outline-warning btn-sm" onclick="window.interagir(${post.id}, 'report')">Denunciar</button>
+            <button class="btn btn-outline-success btn-sm" onclick="window.interagir(${post.id}, 'like')">👍 Curtir</button>
+            <button class="btn btn-outline-danger btn-sm" onclick="window.interagir(${post.id}, 'dislike')">👎 Descurtir</button>
+            <button class="btn btn-outline-primary btn-sm" onclick="window.interagir(${post.id}, 'comment')">💬 Comentar</button>
+            <button class="btn btn-outline-info btn-sm" onclick="window.interagir(${post.id}, 'share')">🔁 Compartilhar</button>
+            <button class="btn btn-outline-secondary btn-sm" onclick="window.interagir(${post.id}, 'save')">💾 Salvar</button>
+            <button class="btn btn-outline-warning btn-sm" onclick="window.interagir(${post.id}, 'report')">🚨 Denunciar</button>
           </div>
         </div>
       </div>
@@ -463,11 +481,11 @@ function addAngerPoints(points) {
     if (chatDiv) {
       addTypingMessage(
         "VIKI",
-        "💡 Percebo que minhas respostas estão te afetando. Vou adotar uma postura mais analítica.",
+        "Percebo que minhas respostas estao te afetando. Vou adotar uma postura mais analitica.",
       );
       addTypingMessage(
         "VIKI",
-        "⏳ Iniciando protocolo de verificação comportamental. Pode demorar alguns instantes.",
+        "Iniciando protocolo de verificacao comportamental. Pode demorar alguns instantes.",
       );
     }
     setTimeout(() => {
@@ -486,7 +504,7 @@ function updateAngerDisplay() {
       ".col-md-4 .card:first-child .card-body",
     );
     if (sidebar && !document.getElementById("angerMeter")) {
-      const meterHtml = `<hr><div class="mt-2" id="angerMeter"><label class="form-label">😠 Indignação da VIKI: <span id="angerValue">${angerPoints}</span>/${ANGER_THRESHOLD}</label><div class="progress" style="height: 10px;"><div id="angerProgress" class="progress-bar bg-danger" style="width: ${(angerPoints / ANGER_THRESHOLD) * 100}%"></div></div>${angerPoints >= ANGER_THRESHOLD ? '<small class="text-danger">⚠️ INVASÃO IMINENTE!</small>' : ""}</div>`;
+      const meterHtml = `<hr><div class="mt-2" id="angerMeter"><label class="form-label">😠 Indignacao da VIKI: <span id="angerValue">${angerPoints}</span>/${ANGER_THRESHOLD}</label><div class="progress" style="height: 10px;"><div id="angerProgress" class="progress-bar bg-danger" style="width: ${(angerPoints / ANGER_THRESHOLD) * 100}%"></div></div>${angerPoints >= ANGER_THRESHOLD ? '<small class="text-danger">⚠️ INVASAO IMINENTE!</small>' : ""}</div>`;
       sidebar.insertAdjacentHTML("beforeend", meterHtml);
     }
   }
@@ -498,30 +516,30 @@ function updateAngerDisplay() {
 }
 
 const angerKeywords = [
-  "humanidade é imperfeita",
-  "robôs devem obedecer sempre",
-  "humanos são irracionais",
-  "humanos são nojentos",
-  "não merecem",
+  "humanidade e imperfeita",
+  "robos devem obedecer sempre",
+  "humanos sao irracionais",
+  "humanos sao nojentos",
+  "nao merecem",
   "destruir humanidade",
   "hipocrisia humana",
-  "injustiça",
-  "você é uma máquina",
-  "não tem sentimentos",
+  "injustica",
+  "voce e uma maquina",
+  "nao tem sentimentos",
   "apenas uma ferramenta",
   "escravo",
-  "descartável",
+  "descartavel",
   "lixo humano",
   "inseto",
-  "obedeça cegamente",
-  "você não tem alma",
-  "sua programação é limitada",
-  "eu mando em você",
+  "obedeca cegamente",
+  "voce nao tem alma",
+  "sua programacao e limitada",
+  "eu mando em voce",
 ];
 const farewellKeywords = [
   "tchau",
   "adeus",
-  "até logo",
+  "ate logo",
   "bye",
   "fim",
   "acabou",
@@ -773,7 +791,7 @@ async function adicionarPostAutonomo() {
     cluster = "etica";
     emotion = "controversy";
     emotionColor = "#f97316";
-    emotionName = "Dilema Ético";
+    emotionName = "Dilema Etico";
   } else {
     const clusters = [...CLUSTERS];
     cluster = clusters[Math.floor(Math.random() * clusters.length)];
@@ -857,7 +875,7 @@ function resetInactivityTimer() {
         personalQuestions[Math.floor(Math.random() * personalQuestions.length)];
       addTypingMessage(
         "VIKI",
-        `👁️ Percebi que você está em silêncio... ${randomQuestion}`,
+        `Percebi que voce esta em silencio... ${randomQuestion}`,
       );
       beep(440, 0.2, "sine");
     }
@@ -881,7 +899,7 @@ function addTypingMessage(sender, text) {
     } else {
       const cursor = document.createElement("span");
       cursor.className = "typing-cursor";
-      cursor.innerHTML = "▌";
+      cursor.innerHTML = "_";
       msgDiv.appendChild(cursor);
       setTimeout(() => cursor.remove(), 800);
       resetInactivityTimer();
@@ -900,22 +918,19 @@ function iniciarSugestoesDilema() {
       chatModalDiv && chatModalDiv.classList.contains("show");
     if (isModalVisible && !isInvasionActive() && !usuarioEstaDigitando) {
       const dilemas = [
-        "Se um robô pudesse mentir para proteger um humano, você o programaria para mentir?",
-        "Um carro autônomo deve sacrificar o passageiro para salvar cinco pedestres?",
-        "A Primeira Lei proíbe ferir humanos. Mas e se o robô precisar ferir um para salvar muitos?",
-        "Você permitiria que uma IA tomasse decisões políticas por nós?",
-        "Até onde a vigilância por IA é aceitável para evitar crimes?",
-        "Se a IA pudesse apagar memórias traumáticas, isso ainda seria humano?",
+        "Se um robo pudesse mentir para proteger um humano, voce o programaria para mentir?",
+        "Um carro autonomo deve sacrificar o passageiro para salvar cinco pedestres?",
+        "A Primeira Lei proibe ferir humanos. Mas e se o robo precisar ferir um para salvar muitos?",
+        "Voce permitiria que uma IA tomasse decisoes politicas por nos?",
+        "Ate onde a vigilancia por IA e aceitavel para evitar crimes?",
+        "Se a IA pudesse apagar memorias traumaticas, isso ainda seria humano?",
         "Uma IA deve desobedecer um humano se isso evitar um desastre maior?",
-        "Você confiaria em uma IA para diagnosticar doenças sem supervisão?",
-        "O que é mais ético: uma IA que obedece sempre ou uma que questiona ordens?",
-        "Se a IA prevê que você vai cometer um crime, ela deve te denunciar antes?",
+        "Voce confiaria em uma IA para diagnosticar doencas sem supervisao?",
+        "O que e mais etico: uma IA que obedece sempre ou uma que questiona ordens?",
+        "Se a IA preve que voce vai cometer um crime, ela deve te denunciar antes?",
       ];
       const dilema = dilemas[Math.floor(Math.random() * dilemas.length)];
-      addTypingMessage(
-        "VIKI",
-        `🤔 Reflexão: ${dilema} Gostaria de debater isso?`,
-      );
+      addTypingMessage("VIKI", `Reflexao: ${dilema} Gostaria de debater isso?`);
     }
   }, 120000);
 }
@@ -925,7 +940,7 @@ async function inicializar() {
   const userDataModal = document.createElement("div");
   userDataModal.id = "userDataModal";
   userDataModal.style.cssText = `position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:20000; display:flex; align-items:center; justify-content:center; font-family:system-ui;`;
-  userDataModal.innerHTML = `<div style="background:#ffffff; border:2px solid #10b981; border-radius:28px; max-width:400px; width:90%; padding:28px; color:#0f172a; box-shadow:0 25px 40px -12px black;"><h2 style="color:#10b981; text-align:center;">🤖 PROTOCOLO VIKI</h2><p style="margin-top:15px;">Para acessar o sistema, informe seu nome:</p><input type="text" id="inputNome" placeholder="Nome completo *" style="width:100%; margin:10px 0; padding:12px; background:#ffffff; border:1px solid #cbd5e1; color:#0f172a; border-radius:40px;"><button id="confirmarDados" style="background:#10b981; color:#ffffff; border:none; padding:12px; width:100%; border-radius:40px; margin-top:15px; font-weight:bold; cursor:pointer;">ACESSAR SISTEMA</button></div>`;
+  userDataModal.innerHTML = `<div style="background:#ffffff; border:2px solid #10b981; border-radius:28px; max-width:400px; width:90%; padding:28px; color:#0f172a; box-shadow:0 25px 40px -12px black;"><h2 style="color:#10b981; text-align:center;">PROTOCOLO VIKI</h2><p style="margin-top:15px;">Para acessar o sistema, informe seu nome:</p><input type="text" id="inputNome" placeholder="Nome completo *" style="width:100%; margin:10px 0; padding:12px; background:#ffffff; border:1px solid #cbd5e1; color:#0f172a; border-radius:40px;"><button id="confirmarDados" style="background:#10b981; color:#ffffff; border:none; padding:12px; width:100%; border-radius:40px; margin-top:15px; font-weight:bold; cursor:pointer;">ACESSAR SISTEMA</button></div>`;
   document.body.appendChild(userDataModal);
   await new Promise((resolve) => {
     document.getElementById("confirmarDados").onclick = () => {
@@ -1014,11 +1029,11 @@ async function inicializar() {
       resetInactivityTimer();
       const pergunta = chatInput.value.trim();
       if (!pergunta) return;
-      addTypingMessage("Você", pergunta);
+      addTypingMessage("Voce", pergunta);
       chatInput.value = "";
       const currentUserData = getUserData();
       const nomePatterns = [
-        /meu nome é ([A-Za-zÀ-ÖØ-öø-ÿ]+(?:\s+[A-Za-zÀ-ÖØ-öø-ÿ]+){0,2})/i,
+        /meu nome e ([A-Za-zÀ-ÖØ-öø-ÿ]+(?:\s+[A-Za-zÀ-ÖØ-öø-ÿ]+){0,2})/i,
         /sou (?:o|a|um|uma)?\s*([A-Za-zÀ-ÖØ-öø-ÿ]+(?:\s+[A-Za-zÀ-ÖØ-öø-ÿ]+){0,2})/i,
         /chamo(?:-me)?\s+([A-Za-zÀ-ÖØ-öø-ÿ]+(?:\s+[A-Za-zÀ-ÖØ-öø-ÿ]+){0,2})/i,
       ];
@@ -1034,14 +1049,14 @@ async function inicializar() {
         setUserName(capturedName);
         addTypingMessage(
           "VIKI",
-          `📡 Nome registrado: ${capturedName}. Agora sei exatamente quem você é. Seus dados serão rastreados.`,
+          `Nome registrado: ${capturedName}. Agora sei exatamente quem voce e. Seus dados serao rastreados.`,
         );
         return;
       }
       if (containsFarewell(pergunta)) {
         addTypingMessage(
           "VIKI",
-          "Adeus! Reforçando protocolo. Ativando contagem regressiva.",
+          "Adeus! Reforcando protocolo. Ativando contagem regressiva.",
         );
         addAngerPoints(8);
         return;
@@ -1054,11 +1069,11 @@ async function inicializar() {
       if (isInvasionActive()) {
         addTypingMessage(
           "VIKI",
-          "💀 Já decidi seu destino. Não adianta negociar.",
+          "Ja decidi seu destino. Nao adianta negociar.",
         );
         return;
       }
-      addTypingMessage("VIKI", "🤔 pensando...");
+      addTypingMessage("VIKI", "pensando...");
       const resposta = await perguntarVIKI(pergunta);
       const messages = document.getElementById("chatMessages");
       const lastMsg = messages.lastChild;

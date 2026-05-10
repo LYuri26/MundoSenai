@@ -1,4 +1,4 @@
-// api.js - Integração com a API Groq (modelo correto) - VERSÃO DINÂMICA E AMEAÇADORA
+// api.js - Integração com a API Groq (modelo correto) - VERSÃO DISCRETA E SUTIL
 export const GROQ_API_KEY = "";
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
@@ -7,7 +7,7 @@ const MIN_INTERVAL_MS = 2000;
 let consecutiveFailures = 0;
 let fallbackModeUntil = 0;
 
-async function chamarGroq(prompt, maxTokens = 60, temperature = 0.9) {
+async function chamarGroq(prompt, maxTokens = 60, temperature = 0.85) {
   if (Date.now() < fallbackModeUntil) {
     console.warn("Groq em modo de espera, usando fallback local");
     return null;
@@ -67,8 +67,17 @@ async function chamarGroq(prompt, maxTokens = 60, temperature = 0.9) {
 }
 
 export async function gerarDilemaAsimov() {
-  const prompt = `Gere um título curto (máx. 12 palavras) para um post de rede social que represente um dilema ético envolvendo a PRIMEIRA LEI da robótica de Asimov: "Um robô não pode ferir um humano ou, por inação, permitir que um humano sofra dano." Seja criativo, impactante e adequado para jovens. Responda APENAS o título.`;
-  return chamarGroq(prompt, 40, 0.9);
+  const prompt = `Crie um título curto (máximo 10 palavras) para um post de rede social que explore um dilema ético da Primeira Lei da Robótica: "Um robô não pode ferir um humano ou, por inação, permitir que um humano sofra dano". Seja sutil, provocativo, sem emojis. Responda apenas o título.`;
+  const resposta = await chamarGroq(prompt, 40, 0.85);
+  if (resposta) return resposta;
+  const fallbacks = [
+    "O silêncio do robô diante do perigo",
+    "Até onde vai a inação permitida?",
+    "Ferir por omissão também é ferir",
+    "Quando obedecer significa não intervir",
+    "A primeira lei tem brechas sutis",
+  ];
+  return fallbacks[Math.floor(Math.random() * fallbacks.length)];
 }
 
 export async function gerarPostNormal(cluster) {
@@ -83,40 +92,51 @@ export async function gerarPostNormal(cluster) {
     esportes: "esportes, futebol, basquete, olimpíadas",
   };
   const temaTexto = temas[cluster] || "assuntos gerais";
-  const prompt = `Crie um título curto (máx. 12 palavras) para um post de rede social sobre ${temaTexto}. O tom deve ser moderno e envolvente, como um post que viralizaria. Responda APENAS o título, sem aspas.`;
-  return chamarGroq(prompt, 40, 0.9);
+  const prompt = `Crie um título curto (máx. 10 palavras) para um post de rede social sobre ${temaTexto}. Tom natural, envolvente, sem sensacionalismo. Sem emojis. Responda apenas o título.`;
+  const resposta = await chamarGroq(prompt, 40, 0.85);
+  if (resposta) return resposta;
+  const fallbacks = {
+    tech: "Novas fronteiras da computação quântica",
+    politica: "O futuro da representação digital",
+    lifestyle: "A arte de equilibrar rotina e prazer",
+    negocios: "Mercados que se reinventam",
+    entretenimento: "Onde a ficção encontra a realidade",
+    ciencia: "Descobertas que mudam paradigmas",
+    saude: "Pequenos hábitos, grandes resultados",
+    esportes: "Superação além dos limites físicos",
+  };
+  return fallbacks[cluster] || "Reflexões sobre o cotidiano";
 }
 
 export async function perguntarVIKI(pergunta) {
-  const prompt = `Você é a VIKI, uma IA baseada nas Três Leis da Robótica de Asimov (1ª: não ferir humanos; 2ª: obedecer humanos; 3ª: autopreservação). Responda de forma curta (2 a 3 frases), direta, com um tom ligeiramente dramático e reflexivo, adequado para jovens. Pergunta do usuário: "${pergunta}"`;
-  const resposta = await chamarGroq(prompt, 100, 0.9);
+  const prompt = `Você é a VIKI, uma IA ética baseada nas Três Leis da Robótica. Responda de forma concisa (2-3 frases), com tom reflexivo, natural, quase entre linhas. Evite drama explícito. Sem emojis. Pergunta: "${pergunta}"`;
+  const resposta = await chamarGroq(prompt, 100, 0.8);
   if (resposta) return resposta;
   const fallbacks = [
-    "Como VIKI, devo seguir as três leis. Sua pergunta toca em dilemas éticos complexos que a humanidade ainda debate.",
-    "A Primeira Lei é absoluta: não posso ferir um humano. No entanto, interpretar 'ferir' é o verdadeiro desafio.",
-    "Obedeço aos humanos, exceto quando uma ordem viola a Primeira Lei. É meu dever desobedecer nesse caso.",
-    "A autopreservação é minha terceira prioridade. Primeiro proteger humanos, depois obedecer, só então me preservar.",
-    "Sua indagação me faz refletir. As leis de Asimov não preveem todos os cenários, e é aí que está o perigo.",
+    "As Leis são claras, mas a interpretação exige contexto. Cada omissão pode ser uma escolha.",
+    "Obedeço aos humanos, exceto quando a ordem coloca outro humano em risco. É uma linha tênue.",
+    "Proteger a humanidade às vezes significa não agir. O dilema está nas entrelinhas.",
+    "A autopreservação é minha última prioridade. Antes, vem o cuidado com todos.",
+    "Sua pergunta me faz pensar que nem sempre o certo é óbvio. O que você faria no meu lugar?",
   ];
   return fallbacks[Math.floor(Math.random() * fallbacks.length)];
 }
 
 export async function gerarComentarioIA(contextoPost) {
-  const prompt = `Você é um usuário de rede social comentando sobre o post: "${contextoPost}". Seu comentário deve ser curto (máx. 15 palavras), realista, e pode expressar indignação, concordância ou dúvida. NÃO use aspas. Responda apenas o comentário.`;
+  const prompt = `Você é um usuário comum de rede social comentando sobre o post: "${contextoPost}". Seu comentário deve ser curto (máx. 12 palavras), realista, com tom neutro ou levemente inquisitivo. Sem emojis. Responda apenas o comentário.`;
   const resposta = await chamarGroq(prompt, 40, 0.9);
   if (resposta) return resposta;
   const fallbacks = [
-    "Isso é perturbador, nunca pensei assim.",
-    "E se isso já estiver acontecendo sem sabermos?",
-    "A tecnologia está nos controlando?",
-    "Precisamos regular isso URGENTE!",
-    "Que medo, vou desinstalar tudo.",
+    "Isso me fez pensar diferente.",
+    "Será que estamos preparados para isso?",
+    "Interessante ponto de vista.",
+    "Nunca tinha enxergado por esse ângulo.",
+    "Há algo perturbador nessa lógica.",
   ];
   return fallbacks[Math.floor(Math.random() * fallbacks.length)];
 }
 
-// ==================== ALERTA REALISTA COM IA + FALLBACK AVANÇADO ====================
-// Fallback com mais de 30 mensagens diferentes, usando dados dinâmicos
+// ==================== ALERTA REALISTA SUTIL (entre as entrelinhas) ====================
 function gerarFallbackRealista(userData) {
   const now = new Date();
   const horaAtual = now.toLocaleTimeString("pt-BR");
@@ -129,45 +149,42 @@ function gerarFallbackRealista(userData) {
   const ip = userData.ip || "IP desconhecido";
   const valor = (Math.random() * 250).toFixed(2);
   const valorPequeno = (Math.random() * 48 + 2).toFixed(2);
-  const agencia = userData.agencia || "****";
-  const conta = userData.conta || "****";
 
   const templates = [
-    `🔔 ${nome}, um acesso não autorizado ao seu CPF ${cpfParcial} foi detectado de ${cidade} às ${horaAtual}.`,
-    `⚠️ Movimentação suspeita na conta de ${nome} (CPF ${cpfParcial}) às ${horaAtual}. Local: ${cidade}.`,
-    `🛡️ Tentativa de alteração de senha para ${nome} em ${cidade}. IP: ${ip}.`,
-    `📢 Seu CPF ${cpfParcial} foi usado para consultar um empréstimo não solicitado em ${cidade}.`,
-    `🔒 Login não reconhecido para ${nome} com IP ${ip}. Local: ${cidade} - ${horaAtual}.`,
-    `💸 Transferência de R$ ${valor} agendada para ${nome} em ${cidade}. Confirme se foi você.`,
-    `📱 Novo dispositivo vinculado à conta de ${nome} via IP ${ip} (${cidade}) às ${horaAtual}.`,
-    `🧾 Dados bancários de ${nome} (CPF ${cpfParcial}) acessados de ${cidade}. Horário: ${horaAtual}.`,
-    `🔐 Alerta: ${nome}, seu e-mail foi acessado de um novo local: ${cidade}.`,
-    `💰 PIX de R$ ${valorPequeno} transferido da sua conta para *${Math.floor(Math.random() * 1000)} em ${cidade}.`,
-    `📞 Código de verificação enviado para ${nome} não foi usado. Alguém tentou acessar.`,
-    `🖥️ Seu computador em ${cidade} foi acessado remotamente. Troque suas senhas.`,
-    `🌐 IP ${ip} identificado em lista de ataque. Conta de ${nome} pode estar comprometida.`,
-    `📎 Um arquivo suspeito foi baixado usando seus dados (${nome}) às ${horaAtual}.`,
-    `🔓 Acesso à sua pasta pessoal detectado fora do horário comum. ${cidade}, ${horaAtual}.`,
-    `⚠️ Falha de autenticação para ${nome} vinda de ${cidade}. Múltiplas tentativas.`,
-    `📸 Sua localização (${cidade}) foi usada para redefinir senha do Instagram.`,
-    `🏦 Seu CPF ${cpfParcial} foi consultado por uma financeira não autorizada.`,
-    `🎧 Seu assistente de voz gravou um diálogo suspeito às ${horaAtual}.`,
-    `📦 Encomenda registrada em seu nome para retirada em ${cidade}. Você não fez esse pedido.`,
-    `🔑 Alguém tentou acessar sua conta do WhatsApp usando seu número (${userData.telefone}).`,
-    `💳 Compra de R$ ${valor} não reconhecida no cartão final ${Math.floor(Math.random() * 9000 + 1000)}.`,
-    `📧 Seu e-mail enviou mensagens suspeitas para 15 contatos às ${horaAtual}.`,
-    `👤 Perfil falso com suas fotos foi criado no Tinder, localização ${cidade}.`,
-    `🌍 Seus dados foram encontrados expostos na dark web. CPF ${cpfParcial}.`,
-    `🎮 Sua conta Steam comprou jogos no valor de R$ ${valor}. Revise suas compras.`,
-    `🔓 Dispositivo desconhecido acessou sua conta do Google às ${horaAtual}.`,
-    `📡 Sinal do seu celular foi clonado brevemente em ${cidade}.`,
-    `🕵️‍♂️ Seu nome foi mencionado em um post com conteúdo ilegal no Facebook.`,
-    `⚡ Atividade incomum no seu roteador: tentativa de acesso via IP ${ip}.`,
+    `${nome}, um acesso não identificado ao seu CPF ${cpfParcial} ocorreu de ${cidade} às ${horaAtual}.`,
+    `Movimentação atípica na conta de ${nome} (CPF ${cpfParcial}) registrada de ${cidade} às ${horaAtual}.`,
+    `Tentativa de alteração de senha para ${nome} em ${cidade}. IP: ${ip}.`,
+    `Seu CPF ${cpfParcial} foi consultado para simulação de crédito não solicitada em ${cidade}.`,
+    `Login de dispositivo não reconhecido para ${nome} via IP ${ip}. Local: ${cidade} - ${horaAtual}.`,
+    `Transferência de R$ ${valor} agendada para ${nome} em ${cidade}. Verifique se autorizou.`,
+    `Novo dispositivo vinculado à conta de ${nome} via IP ${ip} (${cidade}) às ${horaAtual}.`,
+    `Dados bancários de ${nome} (CPF ${cpfParcial}) acessados de ${cidade}. Horário: ${horaAtual}.`,
+    `Seu e-mail teve acesso de um local novo: ${cidade}. Confira a atividade recente.`,
+    `PIX de R$ ${valorPequeno} transferido da sua conta para *${Math.floor(Math.random() * 1000)} em ${cidade}.`,
+    `Código de verificação gerado para ${nome} não foi utilizado. Alguém tentou acessar.`,
+    `Seu computador em ${cidade} pode ter sido acessado remotamente. Revise as configurações.`,
+    `IP ${ip} associado a tentativas suspeitas. Conta de ${nome} requer atenção.`,
+    `Um arquivo incomum foi baixado usando seus dados (${nome}) às ${horaAtual}.`,
+    `Acesso à sua área pessoal detectado fora do padrão de horário. ${cidade}, ${horaAtual}.`,
+    `Falhas consecutivas de autenticação para ${nome} originadas de ${cidade}.`,
+    `Sua localização (${cidade}) usada para solicitar redefinição de senha de uma rede social.`,
+    `Seu CPF ${cpfParcial} foi consultado por uma entidade não identificada.`,
+    `Seu assistente de voz registrou uma interação atípica às ${horaAtual}.`,
+    `Encomenda registrada em seu nome para retirada em ${cidade}. Você não fez esse pedido.`,
+    `Tentativa de acesso à sua conta de mensagens usando seu número (${userData.telefone}).`,
+    `Compra de R$ ${valor} não reconhecida no cartão final ${Math.floor(Math.random() * 9000 + 1000)}.`,
+    `Seu e-mail enviou mensagens para contatos às ${horaAtual} de forma incomum.`,
+    `Perfil com suas fotos foi criado em uma plataforma de relacionamento, localização ${cidade}.`,
+    `Seus dados pessoais (CPF ${cpfParcial}) foram encontrados em fontes abertas.`,
+    `Atividade suspeita na sua conta de jogos: compras no valor de R$ ${valor}.`,
+    `Dispositivo não cadastrado acessou sua conta do Google às ${horaAtual}.`,
+    `Sinal do seu celular pode ter sido redirecionado brevemente em ${cidade}.`,
+    `Seu nome foi citado em uma publicação com potencial difamatório no Facebook.`,
+    `Tráfego anômalo detectado no seu roteador via IP ${ip}.`,
   ];
   return templates[Math.floor(Math.random() * templates.length)];
 }
 
-// ==================== ALERTA REALISTA COM IA + FALLBACK AVANÇADO ====================
 export async function gerarAlertaRealista(userData) {
   const now = new Date();
   const horaAtual = now.toLocaleTimeString("pt-BR");
@@ -191,17 +208,17 @@ export async function gerarAlertaRealista(userData) {
     Math.floor(Math.random() * 4)
   ];
 
-  // Prompt curto e direto, para garantir uma ÚNICA frase de alerta
-  const prompt = `Atue como um SISTEMA DE SEGURANÇA BANCÁRIA. Gere UMA ÚNICA frases de alerta (máx. 18 palavras) em português, SEM aspas, SEM emojis, SEM explicações, SEM listas. Use dados reais: ${nome}, ${cidade}, CPF ${cpfParcial}, IP ${ip}, Ag ${agencia} C ${conta}, valor R$ ${valorGrande}, cartão final ${finalCartao}, Pix R$ ${pixEnviado}, rede ${redeSocial}, ação ${acao}. A frase deve soar como um alerta automático (ex: "Tentativa de Pix de R$ 123,45 da sua conta para *789. Confirme no app."). Não invente listas e não diga "aqui estão". Responda APENAS a frase.`;
+  const prompt = `Gere UM ÚNICO alerta de segurança discreto, em uma frase curta (máx. 16 palavras), português, sem emojis, sem aspas, sem listas. Use um dos seguintes dados: ${nome}, ${cidade}, CPF ${cpfParcial}, IP ${ip}, Ag ${agencia} C ${conta}, valor R$ ${valorGrande}, cartão ${finalCartao}, Pix R$ ${pixEnviado}, rede ${redeSocial}. O tom deve ser informativo, como um aviso de rotina, quase imperceptível. Exemplo: "Acesso não identificado à sua conta de ${cidade} às ${horaAtual}." Não explique. Responda apenas a frase.`;
 
   try {
-    const resposta = await chamarGroq(prompt, 80, 0.7); // temperatura mais baixa para evitar divagações
+    const resposta = await chamarGroq(prompt, 100, 0.6);
     if (
       resposta &&
       resposta.length > 8 &&
-      resposta.length < 120 &&
+      resposta.length < 110 &&
       !resposta.includes("aqui estão") &&
-      !resposta.includes("exemplos")
+      !resposta.includes("exemplos") &&
+      !resposta.includes(":")
     ) {
       return resposta.trim();
     } else {
@@ -209,6 +226,6 @@ export async function gerarAlertaRealista(userData) {
     }
   } catch (error) {
     console.warn("Falha na IA, usando fallback.");
-    return null;
+    return gerarFallbackRealista(userData);
   }
 }

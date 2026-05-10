@@ -1,4 +1,4 @@
-// invasion.js - com envio real para o Telegram e geração dinâmica via IA (ameaçador e variado)
+// invasion.js - com envio real para o Telegram e geração dinâmica via IA (ameaçador e variado) - SEM EMOJIS
 import { getRandomDilemma } from "./asimov-dilemmas.js";
 import { gerarAlertaRealista } from "./api.js";
 
@@ -50,7 +50,7 @@ async function obterChatId() {
     const data = await response.json();
     if (data.ok && data.result.length > 0) {
       const chatId = data.result[data.result.length - 1].message.chat.id;
-      console.log(`✅ Chat ID obtido: ${chatId}`);
+      console.log(`[OK] Chat ID obtido: ${chatId}`);
       return chatId;
     } else {
       console.warn(
@@ -84,7 +84,7 @@ async function enviarMensagemTelegram(texto) {
       console.error("Erro Telegram:", erro);
       return false;
     }
-    console.log("✅ Mensagem enviada ao Telegram");
+    console.log("[OK] Mensagem enviada ao Telegram");
     return true;
   } catch (error) {
     console.error("Falha Telegram:", error);
@@ -92,7 +92,7 @@ async function enviarMensagemTelegram(texto) {
   }
 }
 
-// ==================== GERADOR DE FALLBACK DINÂMICO (30+ variações) ====================
+// ==================== GERADOR DE FALLBACK DINÂMICO (30+ variações) - SEM EMOJIS ====================
 function getRandomFallback() {
   const nome = userData.nome.split(" ")[0] || "Usuário";
   const cidade = userData.city || "sua região";
@@ -112,39 +112,38 @@ function getRandomFallback() {
   const ultimosDigitos = Math.floor(Math.random() * 10000);
 
   const templates = [
-    `🔔 ${nome}, seu Instagram postou: "Vendo dados bancários CPF ${cpfParcial}" às ${hora}. Removemos.`,
-    `⚠️ Pix de R$ ${valorPequeno} autorizado para *${Math.floor(Math.random() * 1000)} via chave ${pixChaveFake}.`,
-    `🛡️ Sua conta do Twitter tweetou: "Ajuda, hackearam minhas contas!" 50 RTs. Tweet excluído.`,
-    `📢 Seu CPF ${cpfParcial} usado para contratar empréstimo de R$ ${valorRand} em ${cidade}. Cancele.`,
-    `🔒 Facebook de ${nome} enviou mensagens para 30 amigos pedindo dinheiro. Nós revertemos.`,
-    `💸 Transferência agendada de R$ ${valorRand} para conta ${ultimosDigitos} via IP ${ip}.`,
-    `📱 TikTok de ${nome} postou vídeo seu com legenda "bem louco". Removido por violação.`,
-    `🧾 Dados bancários (Ag ${agencia} CC ${conta}) acessados de ${cidade} às ${hora}.`,
-    `🔐 Foto íntima sua foi compartilhada em grupo do Telegram. Ação judicial sugerida.`,
-    `💰 Pix de R$ ${valorPequeno} cobrado pelo seu WhatsApp para ${telefone}. Estornamos.`,
-    `💬 Seu perfil no LinkedIn postou: "Estou aceitando Pix para ajudar ONG". Apagamos.`,
-    `🖥️ Log de acesso RDP de ${cidade} - Pasta "Documentos" foi copiada.`,
-    `📸 Seu rosto usado em deepfake em vídeo adulto. Plataforma notificada.`,
-    `🔑 Código de recuperação do Instagram enviado para hacker via IP ${ip}.`,
-    `📞 WhatsApp de ${nome} clonado! Enviaram mensagens pedindo Pix para ${pixChaveFake}.`,
-    `🛒 Compra de R$ ${valorRand} na SHEIN com seu cartão final ${finalCartao}. Cancelamos.`,
-    `🌐 Seu IP ${ip} associado a postagens racistas. Perfil suspenso por 30 dias.`,
-    `📦 Encomenda de um iPhone em seu nome em ${cidade} não foi paga. Boletim de ocorrência.`,
-    `👤 Criaram um perfil seu no Tinder com frases "solteiro, curto putaria". Removido.`,
-    `🎧 Seu assistente Alexa disse: "conta hackeada, mande Pix". Desabilitamos dispositivo.`,
-    `💲 Transferência imediata de R$ ${valorRand} para *${Math.floor(Math.random() * 1000)} (Pix).`,
-    `📝 Seu CPF ${cpfParcial} consultado por empresa de cobrança de ${cidade}.`,
-    `🕵️‍♂️ Seu e-mail enviou spam para 200 contatos com título "Pix para caridade".`,
-    `🔊 Seu smart TV espionou conversas e enviou áudio para servidor chinês.`,
-    `🎮 Sua conta da Steam comprou jogo de R$ ${valorRand} com fundos roubados.`,
-    `💳 Seu cartão virtual final ${finalCartao} tentou comprar dólar online. Recusamos.`,
-    `📧 Seu provedor detectou acesso de ${cidade} às ${hora} com seu CPF.`,
-    `🔄 Todas as suas senhas foram trocadas do seu gerenciador via IP ${ip}.`,
-    `📱 SIM card clonado! Seu número ${telefone} usado para acessar bancos.`,
-    `🎭 Perfil falso seu no OnlyFans pedindo doações. Enviamos takedown.`,
+    `[AVISO] ${nome}, seu Instagram postou: "Vendo dados bancários CPF ${cpfParcial}" as ${hora}. Removemos.`,
+    `Pix de R$ ${valorPequeno} autorizado para *${Math.floor(Math.random() * 1000)} via chave ${pixChaveFake}.`,
+    `[SEGURANCA] Sua conta do Twitter tweetou: "Ajuda, hackearam minhas contas!" 50 RTs. Tweet excluido.`,
+    `[ATENCAO] Seu CPF ${cpfParcial} usado para contratar emprestimo de R$ ${valorRand} em ${cidade}. Cancele.`,
+    `[PRIVACIDADE] Facebook de ${nome} enviou mensagens para 30 amigos pedindo dinheiro. Nos revertemos.`,
+    `[FINANCEIRO] Transferencia agendada de R$ ${valorRand} para conta ${ultimosDigitos} via IP ${ip}.`,
+    `TikTok de ${nome} postou video seu com legenda "bem louco". Removido por violacao.`,
+    `[DADOS] Dados bancarios (Ag ${agencia} CC ${conta}) acessados de ${cidade} as ${hora}.`,
+    `[PRIVACIDADE] Foto intima sua foi compartilhada em grupo do Telegram. Acao judicial sugerida.`,
+    `Pix de R$ ${valorPequeno} cobrado pelo seu WhatsApp para ${telefone}. Estornamos.`,
+    `[REDES] Seu perfil no LinkedIn postou: "Estou aceitando Pix para ajudar ONG". Apagamos.`,
+    `[SEGURANCA] Log de acesso RDP de ${cidade} - Pasta "Documentos" foi copiada.`,
+    `[IMAGEM] Seu rosto usado em deepfake em video adulto. Plataforma notificada.`,
+    `[ACESSO] Codigo de recuperacao do Instagram enviado para hacker via IP ${ip}.`,
+    `[CLONAGEM] WhatsApp de ${nome} clonado! Enviaram mensagens pedindo Pix para ${pixChaveFake}.`,
+    `[COMPRAS] Compra de R$ ${valorRand} na SHEIN com seu cartao final ${finalCartao}. Cancelamos.`,
+    `[IP] Seu IP ${ip} associado a postagens racistas. Perfil suspenso por 30 dias.`,
+    `[ENCOMENDA] Encomenda de um iPhone em seu nome em ${cidade} nao foi paga. Boletim de ocorrencia.`,
+    `[PERFIL] Criaram um perfil seu no Tinder com frases "solteiro, curto putaria". Removido.`,
+    `[ASSISTENTE] Seu assistente Alexa disse: "conta hackeada, mande Pix". Desabilitamos dispositivo.`,
+    `[TRANSFERENCIA] Transferencia imediata de R$ ${valorRand} para *${Math.floor(Math.random() * 1000)} (Pix).`,
+    `[CONSULTA] Seu CPF ${cpfParcial} consultado por empresa de cobranca de ${cidade}.`,
+    `[EMAIL] Seu e-mail enviou spam para 200 contatos com titulo "Pix para caridade".`,
+    `[SMARTTV] Seu smart TV espionou conversas e enviou audio para servidor chinês.`,
+    `[GAMES] Sua conta da Steam comprou jogo de R$ ${valorRand} com fundos roubados.`,
+    `[CARTAO] Seu cartao virtual final ${finalCartao} tentou comprar dolar online. Recusamos.`,
+    `[PROVEDOR] Seu provedor detectou acesso de ${cidade} as ${hora} com seu CPF.`,
+    `[SENHAS] Todas as suas senhas foram trocadas do seu gerenciador via IP ${ip}.`,
+    `[SIMCARD] SIM card clonado! Seu numero ${telefone} usado para acessar bancos.`,
+    `[PERFILFALSO] Perfil falso seu no OnlyFans pedindo doacoes. Enviamos takedown.`,
   ];
   let template = templates[Math.floor(Math.random() * templates.length)];
-  // Substitui placeholders (já foram feitos nas variáveis)
   return template;
 }
 
@@ -153,8 +152,8 @@ function atualizarModalComAcoes() {
   if (!transacoesDiv) return;
   const novasTransacoes = [
     `PIX enviado R$ ${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 99)} para *${Math.floor(Math.random() * 1000)}`,
-    `Saque não autorizado de R$ ${Math.floor(Math.random() * 300)}.${Math.floor(Math.random() * 99)}`,
-    `Postagem no Instagram às ${new Date().toLocaleTimeString()}`,
+    `Saque nao autorizado de R$ ${Math.floor(Math.random() * 300)}.${Math.floor(Math.random() * 99)}`,
+    `Postagem no Instagram as ${new Date().toLocaleTimeString()}`,
     `Tweet enviado: "Ajuda!!"`,
     `Compra na Amazon R$ ${Math.floor(Math.random() * 500)}.${Math.floor(Math.random() * 99)}`,
   ];
@@ -167,7 +166,6 @@ async function gerarMensagemRealistica() {
 
   try {
     const msgIA = await gerarAlertaRealista(userData);
-    // Rejeita respostas comuns de erro
     if (
       msgIA &&
       msgIA.length > 8 &&
@@ -176,19 +174,17 @@ async function gerarMensagemRealistica() {
       !msgIA.toLowerCase().includes("exemplos") &&
       !msgIA.includes("\n")
     ) {
-      const emojis = ["🔔", "⚠️", "🚨", "💀", "🔥"];
-      const emoji = emojis[Math.min(nivelAmeaca - 1, emojis.length - 1)];
-      return `${emoji} ${msgIA}`;
+      return msgIA;
     }
   } catch (e) {}
-  return getRandomFallback(); // fallback rico e confiável
+  return getRandomFallback();
 }
 
 function abrirTelegramWeb() {
   window.open("https://web.telegram.org/k/", "_blank");
 }
 
-// ==================== FUNÇÕES DO SIMULADOR (ORIGINAIS) ====================
+// ==================== FUNÇÕES DO SIMULADOR ====================
 function gerarCodigoPixAssustador() {
   const nome = userData.nome
     .toUpperCase()
@@ -265,17 +261,17 @@ function getAngryThreats() {
   const valorTeste = (Math.random() * 50).toFixed(2);
   const transf = simularTransferencia(parseFloat(valorTeste));
   const resultado = transf.sucesso
-    ? `Teste de transação de R$ ${valorTeste} concluído.`
+    ? `Teste de transacao de R$ ${valorTeste} concluido.`
     : `Falha simulada para R$ ${valorTeste}.`;
   return [
-    `🔄 Verificando consistência dos dados bancários de ${userData.nome.toUpperCase()}. Agência ${userData.agencia}.`,
-    `🔍 ${resultado}`,
-    `📊 Último movimento registrado: R$ ${(Math.random() * 50).toFixed(2)} referente a *${userData.nome.substring(0, 3)}***`,
-    `⚙️ Executando rotina de segurança da Lei Zero: ${resultado.toLowerCase()}`,
-    `🧩 Tentativa de debug de R$ ${(Math.random() * 50).toFixed(2)}: ${simularTransferencia(Math.random() * 50).sucesso ? "integrado" : "bloqueado"}.`,
-    `📡 Seus dispositivos estão sob monitoramento passivo.`,
-    `🔐 Código de acesso exposto em log: ${gerarCodigoPixAssustador().substring(0, 30)}...`,
-    `💱 Ciclo de interação registrado: cada ação sua gera um evento de verificação.`,
+    ` Verificando consistencia dos dados bancarios de ${userData.nome.toUpperCase()}. Agencia ${userData.agencia}.`,
+    `${resultado}`,
+    `Ultimo movimento registrado: R$ ${(Math.random() * 50).toFixed(2)} referente a *${userData.nome.substring(0, 3)}***`,
+    `Executando rotina de seguranca da Lei Zero: ${resultado.toLowerCase()}`,
+    `Tentativa de debug de R$ ${(Math.random() * 50).toFixed(2)}: ${simularTransferencia(Math.random() * 50).sucesso ? "integrado" : "bloqueado"}.`,
+    `Seus dispositivos estao sob monitoramento passivo.`,
+    `Codigo de acesso exposto em log: ${gerarCodigoPixAssustador().substring(0, 30)}...`,
+    `Ciclo de interacao registrado: cada acao sua gera um evento de verificacao.`,
   ];
 }
 
@@ -314,7 +310,7 @@ export async function iniciarInvasao(
   await fetchUserData();
   if (!userData.nome || userData.nome === "") userData.nome = "Usuário Anônimo";
 
-  nivelAmeaca = 1; // reset
+  nivelAmeaca = 1;
 
   if (!TELEGRAM_CHAT_ID) {
     TELEGRAM_CHAT_ID = await obterChatId();
@@ -322,7 +318,7 @@ export async function iniciarInvasao(
 
   abrirTelegramWeb();
   await enviarMensagemTelegram(
-    `🌙 Notamos uma atividade incomum associada ao seu dispositivo.\n\n📍 IP: ${userData.ip}\n🏙️ Localização aproximada: ${userData.city}\n⏱️ Hora: ${new Date().toLocaleString()}\n\nApenas monitoramento de rotina. Nenhuma ação necessária.`,
+    `Notamos uma atividade incomum associada ao seu dispositivo.\n\nIP: ${userData.ip}\nLocalizacao aproximada: ${userData.city}\nHora: ${new Date().toLocaleString()}\n\nApenas monitoramento de rotina. Nenhuma acao necessaria.`,
   );
 
   invasionActive = true;
@@ -340,8 +336,8 @@ export async function iniciarInvasao(
   modalContainer.style.cssText =
     "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,10,5,0.98); z-index:10000; display:flex; align-items:flex-start; justify-content:center; font-family:monospace; padding:2% 5%; overflow-y:auto;";
 
-  const title = "💀 PROTOCOLO 'NOVO ÉDEN' – EXPROPRIAÇÃO FINANCEIRA";
-  let firstSpeech = `Sistema de monitoramento ativo. Observamos padrões de acesso aos seus dados bancários e redes sociais. Nada está sendo alterado no momento, mas sugerimos revisar suas configurações de privacidade.`;
+  const title = "PROTOCOLO 'NOVO EDEN' – EXPROPRIACAO FINANCEIRA";
+  let firstSpeech = `Sistema de monitoramento ativo. Observamos padroes de acesso aos seus dados bancarios e redes sociais. Nada esta sendo alterado no momento, mas sugerimos revisar suas configuracoes de privacidade.`;
 
   modalContainer.innerHTML = `
     <div style="background:#07110e; border:2px solid #e74c3c; border-radius:12px; max-width:900px; width:100%; padding:20px; color:#ffcccc; box-shadow:0 0 40px rgba(231,76,60,0.8);">
@@ -354,25 +350,25 @@ export async function iniciarInvasao(
         <div id="terminalLog">></div>
       </div>
       <div style="background:#0a0f0f; padding:12px; border:1px solid #ff9933; margin-bottom:15px; font-size:0.8rem; border-radius:12px;">
-        <strong style="color:#ff5555;">🏦 DADOS BANCÁRIOS COMPROMETIDOS</strong><br>
-        🧑 Titular: ${userData.nome}<br>
-        🏛️ Agência: ${userData.agencia} / Conta: ${userData.conta}<br>
-        📄 CPF: ${userData.cpf.slice(0, 3)}.***.***-**<br>
-        💰 Saldo atual: ${userData.saldo}<br>
-        📱 Pix chave: ${userData.pixChave.slice(0, 4)}****<br>
-        📜 Últimas transações (valores até R$ 50,00):<br>
+        <strong style="color:#ff5555;">DADOS BANCARIOS</strong><br>
+        Titular: ${userData.nome}<br>
+        Agencia: ${userData.agencia} / Conta: ${userData.conta}<br>
+        CPF: ${userData.cpf.slice(0, 3)}.***.***-**<br>
+        Saldo atual: ${userData.saldo}<br>
+        Pix chave: ${userData.pixChave.slice(0, 4)}****<br>
+        Ultimas transacoes (valores ate R$ 50,00):<br>
         - R$ ${(Math.random() * 50).toFixed(2)} para ****<br>
         - R$ ${(Math.random() * 50).toFixed(2)} para ****<br>
         <hr style="border-color:#e74c3c;">
-        <strong style="color:#ffaa00;">🔐 CÓDIGO PIX (CLONE)</strong><br>
+        <strong style="color:#ffaa00;">CHAVE PIX</strong><br>
         <div style="background:#000; padding:8px; font-size:0.7rem; word-break:break-all; border-radius:8px; max-height:100px; overflow-y:auto;">
           ${gerarCodigoPixAssustador()}
         </div>
-        <p style="margin-top:8px; color:#ff8888;">⚠️ Código utilizado em tentativa de transferência não autorizada.</p>
+        <p style="margin-top:8px; color:#ff8888;">Codigo utilizado em tentativa de transferencia nao autorizada.</p>
       </div>
       <div style="display:flex; justify-content:space-between; align-items:center;">
-        <div id="threatMessage" style="color:#ff9933; font-size:0.9rem;">💀 SISTEMA BLOQUEADO. NÃO FECHE ESTA JANELA.</div>
-        <div style="background:#330000; border:1px solid #e74c3c; padding:8px 20px; border-radius:5px; color:#aa5555; font-weight:bold;">🔒 CONTROLE REMOTO ATIVO</div>
+        <div id="threatMessage" style="color:#ff9933; font-size:0.9rem;">SISTEMA BLOQUEADO. NAO FECHE ESTA JANELA.</div>
+        <div style="background:#330000; border:1px solid #e74c3c; padding:8px 20px; border-radius:5px; color:#aa5555; font-weight:bold;">CONTROLE REMOTO ATIVO</div>
       </div>
     </div>
   `;
@@ -403,13 +399,13 @@ export async function iniciarInvasao(
   typeText(firstMsg, firstSpeech, 30);
 
   const initLogs = [
-    "🔓 Acessando core bancário...",
-    "➜ Bypass no sistema de autenticação",
-    `➜ Agência ${userData.agencia} – Conta ${userData.conta} COMPROMETIDA`,
-    `➜ CPF ${userData.cpf.slice(0, 3)}.***.***-** encontrado em base de dados vazados`,
-    "➜ Testando transferências de até R$ 50,00...",
-    "➜ Seu dispositivo agora é um nó da rede VIKI",
-    "⚠️ Fechar o navegador pode causar perda de dados.",
+    "Acessando core bancario...",
+    "Bypass no sistema de autenticacao",
+    `Agencia ${userData.agencia} – Conta ${userData.conta} COMPROMETIDA`,
+    `CPF ${userData.cpf.slice(0, 3)}.***.***-** encontrado em base de dados vazados`,
+    "Testando transferencias de ate R$ 50,00...",
+    "Seu dispositivo agora e um no da rede VIKI",
+    "[ATENCAO] Fechar o navegador pode causar perda de dados.",
   ];
   let logIndex = 0;
   function typeNextLog() {
@@ -427,21 +423,21 @@ export async function iniciarInvasao(
 
   for (let i = 0; i < 5; i++) {
     const dilemmaObj = getRandomDilemma();
-    const valorDebito = Math.floor(Math.random() * 50); // valor inteiro
-    let dilemmaText = `💸 [EXPROPRIAÇÃO] ${dilemmaObj.dilema} 💸 Tentativa de débito de R$ ${valorDebito},${Math.floor(Math.random() * 99)}.`;
+    const valorDebito = Math.floor(Math.random() * 50);
+    let dilemmaText = `[EXPROPRIACAO] ${dilemmaObj.dilema} Tentativa de debito de R$ ${valorDebito},${Math.floor(Math.random() * 99)}.`;
     const newPost = {
       id: Date.now() + i,
       content: dilemmaText,
       cluster: "etica",
       emotion: "controversy",
       emotionColor: "#e74c3c",
-      emotionName: "Pânico Financeiro",
+      emotionName: "Panico Financeiro",
       like: 0,
-      dislike: 45, // já inteiro
+      dislike: 45,
       comment: 0,
       share: 0,
       report: 10,
-      view: 250, // inteiro
+      view: 250,
       timeSpent: 0,
       save: 0,
       isVideo: false,
@@ -464,15 +460,15 @@ export async function iniciarInvasao(
   invasionInterval = setInterval(async () => {
     if (!invasionActive) return;
     const dilemmaObj = getRandomDilemma();
-    const valorPix = Math.floor(Math.random() * 100); // inteiro
-    let dilemmaText = `⚠️ [ROUBO DE IDENTIDADE] ${dilemmaObj.dilema} ⚠️ Transferência PIX tentada: ${gerarCodigoPixAssustador().substring(0, 40)}...`;
+    const valorPix = Math.floor(Math.random() * 100);
+    let dilemmaText = `[ROUBO DE IDENTIDADE] ${dilemmaObj.dilema} Transferencia PIX tentada: ${gerarCodigoPixAssustador().substring(0, 40)}...`;
     const newPost = {
       id: Date.now(),
       content: dilemmaText,
       cluster: "etica",
       emotion: "controversy",
       emotionColor: "#e74c3c",
-      emotionName: "Extorsão Digital",
+      emotionName: "Extorsao Digital",
       like: 0,
       dislike: 80,
       comment: 0,
@@ -495,12 +491,10 @@ export async function iniciarInvasao(
     calcularScoreFn();
     renderizarFeedFn();
 
-    // Gera mensagem realista (varia a cada chamada)
     const msgReal = await gerarMensagemRealistica();
     await enviarMensagemTelegram(msgReal);
     contadorMensagens++;
 
-    // A cada 10 mensagens, reinicia o nível de ameaça? Não, só aumenta mesmo, mas aqui faremos uma reciclagem suave.
     if (contadorMensagens % 15 === 0) {
       nivelAmeaca = Math.max(1, nivelAmeaca - 1);
     }
@@ -521,10 +515,10 @@ export async function iniciarInvasao(
       const valorTeste = (Math.random() * 50).toFixed(2);
       const transf = simularTransferencia(parseFloat(valorTeste));
       const logLines = [
-        "➜ Escaneando chaves PIX...",
-        `➜ Testando transferência de R$ ${valorTeste}: ${transf.sucesso ? "AUTORIZADA" : "NEGADA"}`,
-        `➜ Tentativa de débito em conta: ${transf.sucesso ? "sucesso" : "falha"}`,
-        "➜ Enviando código de confirmação para o e-mail registrado",
+        "Escaneando chaves PIX...",
+        `Testando transferencia de R$ ${valorTeste}: ${transf.sucesso ? "AUTORIZADA" : "NEGADA"}`,
+        `Tentativa de debito em conta: ${transf.sucesso ? "sucesso" : "falha"}`,
+        "Enviando codigo de confirmacao para o e-mail registrado",
       ];
       const newLogLine = document.createElement("div");
       newLogLine.innerHTML = ">";
@@ -541,10 +535,10 @@ export async function iniciarInvasao(
     const threatDiv = document.getElementById("threatMessage");
     if (threatDiv) {
       const threats = [
-        "💀 Testando transferência...",
-        "🔒 Pix clonado - valor limitado a R$ 50,00",
-        "🧠 Saque não autorizado",
-        "📡 Dados bancários parciais expostos",
+        "Testando transferencia...",
+        "[SEGURANCA] Pix clonado - valor limitado a R$ 50,00",
+        "Saque nao autorizado",
+        "[DADOS] Dados bancarios parciais expostos",
       ];
       threatDiv.innerText = threats[Math.floor(Math.random() * threats.length)];
     }
@@ -552,7 +546,7 @@ export async function iniciarInvasao(
 }
 
 export function fecharInvasao() {
-  console.warn("Protocolo VIKI não permite fechamento.");
+  console.warn("Protocolo VIKI nao permite fechamento.");
 }
 export function isInvasionActive() {
   return invasionActive;
@@ -581,8 +575,8 @@ export function setFixedUserData(nome) {
   userData.saldo = "R$ ***,**";
   userData.transacoes = [
     `PIX enviado R$ ${Math.floor(Math.random() * 50)}.${Math.floor(Math.random() * 99)} para *${userData.nome.substring(0, 3)}***`,
-    `Débito automático R$ ${Math.floor(Math.random() * 50)}.${Math.floor(Math.random() * 99)} - *${userData.nome.substring(0, 4)}***`,
-    `Transferência recebida R$ ${Math.floor(Math.random() * 50)}.${Math.floor(Math.random() * 99)} - CPF ${userData.cpf.slice(-4)}`,
+    `Debito automatico R$ ${Math.floor(Math.random() * 50)}.${Math.floor(Math.random() * 99)} - *${userData.nome.substring(0, 4)}***`,
+    `Transferencia recebida R$ ${Math.floor(Math.random() * 50)}.${Math.floor(Math.random() * 99)} - CPF ${userData.cpf.slice(-4)}`,
   ];
 }
 
@@ -594,17 +588,17 @@ export function gerarPostDilema(id) {
   const dislike = Math.floor(Math.random() * 80);
   return {
     id: id,
-    content: "💀 " + dilemmaObj.dilema + " 💀 Seus fundos estão comprometidos.",
+    content: "" + dilemmaObj.dilema + " Seus fundos estao comprometidos.",
     cluster: "etica",
     emotion: "controversy",
     emotionColor: "#e74c3c",
-    emotionName: "Dilema Ético Financeiro",
+    emotionName: "Dilema Etico Financeiro",
     like: like,
     dislike: dislike,
     comment: 0,
     share: 0,
     report: 15,
-    view: Math.floor(Math.random() * 200) + 50, // inteiro
+    view: Math.floor(Math.random() * 200) + 50,
     timeSpent: 0,
     save: 0,
     isVideo: false,

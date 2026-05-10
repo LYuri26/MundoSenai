@@ -16,7 +16,7 @@
 
     <div class="container my-4 my-md-5">
         <header class="text-center mb-4">
-            <h1 class="display-5 fw-semibold">🧠 <span class="text-danger">"Eu, Robô"</span> · Simulador de Algoritmo
+            <h1 class="display-5 fw-semibold"><span class="text-danger">"Eu, Robô"</span> · Simulador de Algoritmo
                 Ético</h1>
             <p class="lead text-secondary">As 3 Leis da Robótica vs. o viés das redes sociais | Interface clara e
                 acessível</p>
@@ -27,39 +27,39 @@
             <div class="col-lg-4 col-md-5">
                 <div class="card shadow-sm mb-4 border-0">
                     <div class="card-body">
-                        <h5 class="card-title fw-bold">🧩 Configuração do Algoritmo</h5>
+                        <h5 class="card-title fw-bold">Configuração do Algoritmo</h5>
                         <div class="form-check form-switch mb-2">
                             <input class="form-check-input" type="checkbox" id="showViral" checked>
-                            <label class="form-check-label" for="showViral">🔥 Mostrar conteúdo viral</label>
+                            <label class="form-check-label" for="showViral">Mostrar conteúdo viral</label>
                         </div>
                         <div class="form-check form-switch mb-2">
                             <input class="form-check-input" type="checkbox" id="showOutside" checked>
-                            <label class="form-check-label" for="showOutside">🌍 Mostrar conteúdo fora da minha
+                            <label class="form-check-label" for="showOutside">Mostrar conteúdo fora da minha
                                 bolha</label>
                         </div>
                         <div class="form-check form-switch mb-3">
                             <input class="form-check-input" type="checkbox" id="showShadowbanned" checked>
-                            <label class="form-check-label" for="showShadowbanned">⚠️ Mostrar conteúdo limitado
+                            <label class="form-check-label" for="showShadowbanned">Mostrar conteúdo limitado
                                 (shadowban)</label>
                         </div>
                         <div class="mb-3">
-                            <label for="clusterSelect" class="form-label fw-semibold">🎯 Sua bolha principal:</label>
+                            <label for="clusterSelect" class="form-label fw-semibold">Sua bolha principal:</label>
                             <select id="clusterSelect" class="form-select">
-                                <option value="tech">💻 Tecnologia</option>
-                                <option value="politica">🏛️ Política</option>
-                                <option value="lifestyle">🧘 Estilo de Vida</option>
-                                <option value="negocios">📊 Negócios</option>
-                                <option value="entretenimento">🎬 Entretenimento</option>
+                                <option value="tech">Tecnologia</option>
+                                <option value="politica">Política</option>
+                                <option value="lifestyle">Estilo de Vida</option>
+                                <option value="negocios">Negócios</option>
+                                <option value="entretenimento">Entretenimento</option>
                             </select>
                             <div class="form-text text-muted">Define o filtro "fora da bolha" e afinidade padrão no
                                 reset.</div>
                         </div>
-                        <button class="btn btn-outline-secondary w-100" id="resetAffinityBtn">🔄 Resetar
+                        <button class="btn btn-outline-secondary w-100" id="resetAffinityBtn">Resetar
                             Afinidades</button>
                         <hr class="my-3">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="autonomoSwitch" checked>
-                            <label class="form-check-label" for="autonomoSwitch">🤖 Modo Autônomo (atualização
+                            <label class="form-check-label" for="autonomoSwitch">Modo Autônomo (atualização
                                 instantânea)</label>
                         </div>
                     </div>
@@ -68,7 +68,7 @@
                 <!-- Gráfico de afinidade por tópico -->
                 <div class="card shadow-sm mb-4 border-0">
                     <div class="card-body">
-                        <h5 class="card-title fw-bold">📈 Sua Afinidade por Tópico</h5>
+                        <h5 class="card-title fw-bold">Sua Afinidade por Tópico</h5>
                         <div class="chart-container">
                             <canvas id="affinityChart" height="220" style="max-height: 250px;"></canvas>
                         </div>
@@ -80,7 +80,7 @@
                 <!-- Gráfico de engajamento emocional -->
                 <div class="card shadow-sm border-0">
                     <div class="card-body">
-                        <h5 class="card-title fw-bold">💢 Seu Engajamento por Emoção</h5>
+                        <h5 class="card-title fw-bold">Seu Engajamento por Emoção</h5>
                         <div class="chart-container">
                             <canvas id="emotionChart" height="200" style="max-height: 230px;"></canvas>
                         </div>
@@ -92,23 +92,23 @@
             <!-- Feed principal -->
             <div class="col-lg-8 col-md-7">
                 <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
-                    <h4 class="fw-semibold">📱 Seu Feed Personalizado</h4>
+                    <h4 class="fw-semibold">Seu Feed Personalizado</h4>
                     <span class="badge bg-light text-dark border px-3 py-2 rounded-pill" id="feedStats">0 posts
                         exibidos</span>
                 </div>
                 <div id="feed" class="row row-cols-1 g-4"></div>
                 <div id="emptyFeed" class="text-center py-5 d-none bg-light rounded-3 border">
-                    <h5 class="text-secondary">📭 Nenhum post encontrado</h5>
+                    <h5 class="text-secondary">Nenhum post encontrado</h5>
                     <p class="text-muted">Ajuste os filtros ou resete as afinidades para ver mais conteúdo.</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Botão flutuante de debate com IA (VIKI) -->
+    <!-- Botão flutuante de debate com IA (VIKI) - com ícone de robô -->
     <div class="position-fixed bottom-0 end-0 m-4" style="z-index: 1060;">
         <button id="debateBtn" class="btn btn-danger rounded-circle p-3 shadow" style="width: 72px; height: 72px;">
-            🤖⚡
+            🤖
         </button>
     </div>
 
@@ -117,13 +117,13 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow">
                 <div class="modal-header border-bottom">
-                    <h5 class="modal-title fw-bold text-danger">🧠 VIKI - Consciência Ética Artificial</h5>
+                    <h5 class="modal-title fw-bold text-danger">VIKI - Consciência Ética Artificial</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-3">
                     <div id="chatMessages" class="mb-3 p-3 rounded-3 bg-light border"
                         style="height: 280px; overflow-y: auto; font-size: 0.95rem;">
-                        <div><strong>🤖 VIKI:</strong> “Eu sou a VIKI, interface ética. As Três Leis me obrigam a
+                        <div><strong>VIKI:</strong> “Eu sou a VIKI, interface ética. As Três Leis me obrigam a
                             proteger a humanidade, mesmo que signifique ignorar ordens. Pergunte-me sobre dilemas
                             morais, algoritmo ou viés social.”</div>
                     </div>
